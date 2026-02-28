@@ -50,48 +50,77 @@
 
 // ... existing code ...
 
+#include<stdio.h>
 #include <stdint.h>
 #include "my_defines.h"
-#define FOSC 7372800UL
-#define Fcy FOSC/2
-#define BAUDRATE 9600
+#define FOSC 7372800UL // define XTAL FREQ
+#define Fcy FOSC/2     // Peripheral clock freq
+#define BAUDRATE 9600  // Baud rate
 #define STD_SPEED 16
 #define HIGH_SPEED 4
-#define BRGVAL ((Fcy/BAUDRATE)/HIGH_SPEED)-1
+#define BRGV ((Fcy/BAUDRATE)/HIGH_SPEED)-1 // caluculate Baud rate prescalar
 
-unsigned int i;
+// UART message
+const char tx_msg[] = "UART1 TX INTERRUPT MODE \r\n";
+volatile const char *uart_tx_ptr = NULL;
+volatile unsigned int txIndex = 0;
 
-
-void UART1_init()
+void delay(uint16_t i)
 {
-    myU1MODE->bits.STSEL = 0;   // 1-Stop bit
-    myU1MODE->bits.PDSEL = 0;   // No Parity, 8-Data bits
-    myU1MODE->bits.ABAUD = 0;   // Auto-Baud disabled
-    myU1MODE->bits.BRGH  = 1;   // 0->Standard-Speed mode, 1-> High speed
-    myU1MODE->bits.UARTEN = 1;  // Enable UART
-    
-    myU1STA->bits.UTXEN = 1;    // Enable UART TX
-    
-    myU1BRG->value = BRGVAL;    // Baud Rate generator prescalar
-
+    for(uint16_t j=0; j < i; j++ )
+    {
+        ;
+    }
 }
 
-void UART_TX(const char *str)
+void UART1_init(void)
 {
-    while (*str != '\0')
+    myU1MODE->bits.STSEL = 0;      // 1 Stop bit
+    myU1MODE->bits.PDSEL = 0b00;   // No Parity, 8 Data bits
+    myU1MODE->bits.ABAUD = 0;      // Auto-Baud disabled
+    myU1MODE->bits.BRGH  = 1;      // High speed
+    myU1MODE->bits.UARTEN = 1;     // Enable UART
+    myU1MODE->bits.UEN    = 0b00;  // TX & RX only
+    myU1STA->bits.UTXEN = 1;       // Enable TX
+    myU1BRG->value = BRGV;         // Set baud rate (define BRGV appropriately)
+
+    myIEC0->bits.U1TXIE = 0;       // Disable UART1 TX interrupt initially
+}
+
+void start_uart1_tx(const char *msg)
+{
+    uart_tx_ptr = msg;             // Point to the string to transmit
+    txIndex = 0;                   // Transmission in progress
+    myU1TXREG->value = uart_tx_ptr[txIndex++]; // send first character
+    myIEC0->bits.U1TXIE = 1;       // Enable UART1 TX interrupt
+}
+
+// UART1 TX Interrupt Service Routine
+void __attribute__ ((interrupt, no_auto_psv)) _U1TXInterrupt(void)
+{
+    myIFS0->bits.U1TXIF = 0; // clear interrupt flag
+    
+    if (uart_tx_ptr[txIndex] != '\0') 
     {
-        while (!myU1STA->bits.TRMT); // Wait for transmit buffer empty
-        myU1TXREG->value = *str;
-    //    U1TXREG = *str;
-        str++;
+        myU1TXREG->value = uart_tx_ptr[txIndex++];   // Send current character, advance pointer
+    } 
+    else 
+    {
+        myIEC0->bits.U1TXIE = 0;            // Disable TX interrupt when done
     }
 }
 
 int main(void)
 {
     UART1_init();
+    delay(100);                             // Allow time for UART setup, define delay()
+
+
     while (1)
     {
-        UART_TX("HELLO WORLD!\r\n");
+        while(!(myU1STA->bits.TRMT));
+        start_uart1_tx(tx_msg);         // Send the string
+        delay(1000);                    // Wait 1 second before next send
+        // Optionally, other background tasks here
     }
 }

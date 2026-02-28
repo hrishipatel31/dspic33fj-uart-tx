@@ -86,21 +86,21 @@ Default Scalar Model: Small
 
 section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
-.text                        0x200                0xce           0x135  (309)
-.const                       0x2ce                0x18            0x24  (36)
-.text                        0x2e6                0x72            0xab  (171)
-.dinit                       0x358                 0x8             0xc  (12)
+.text                        0x200               0x10a           0x18f  (399)
+.const                       0x30a                0x28            0x3c  (60)
+.text                        0x332                0xb0           0x108  (264)
+.dinit                       0x3e2                 0x8             0xc  (12)
 
-                 Total "program" memory used (bytes):          0x210  (528) <1%
+                 Total "program" memory used (bytes):          0x2df  (735) <1%
 
 
 "data" Memory  [Origin = 0x800, Length = 0x7800]
 
 section                    address      alignment gaps    total length  (dec)
 -------                    -------      --------------    -------------------
-.nbss                        0x800                   0             0x2  (2)
+.nbss                        0x800                   0             0x4  (4)
 
-                 Total "data" memory used (bytes):            0x2  (2) <1%
+                 Total "data" memory used (bytes):            0x4  (4) <1%
 
 
 Dynamic Memory Usage
@@ -108,56 +108,68 @@ Dynamic Memory Usage
 region                     address                      maximum length  (dec)
 ------                     -------                      ---------------------
 heap                             0                                   0  (0)
-stack                        0x802                              0x77fe  (30718)
+stack                        0x804                              0x77fc  (30716)
 
-                 Maximum dynamic memory (bytes):         0x77fe  (30718)
+                 Maximum dynamic memory (bytes):         0x77fc  (30716)
 
 Info: Project is using a large data memory model when small data memory model is sufficient.
 
 
 External Symbols in Data Memory (by address):
 
-                    0x0800                  _i
+                    0x0800                  _uart_tx_ptr
+                    0x0802                  _txIndex
 
 External Symbols in Data Memory (by name):
 
-                    0x0800                  _i
+                    0x0802                  _txIndex
+                    0x0800                  _uart_tx_ptr
 
 External Symbols in Program Memory (by address):
 
                   0x000200                  __resetPRI
                   0x00023c                  __psv_init
-                  0x000252                  __data_init_standard
                   0x000252                  __data_init
-                  0x0002c8                  __DefaultInterrupt
-                  0x0002ce                  _myU1MODE
-                  0x0002d0                  _myU1STA
-                  0x0002d2                  _myU1BRG
-                  0x0002d4                  _myU1TXREG
-                  0x0002e6                  _UART1_init
-                  0x000324                  _UART_TX
-                  0x00034e                  _main
+                  0x000252                  __data_init_standard
+                  0x0002c8                  __U1TXInterrupt
+                  0x000304                  __DefaultInterrupt
+                  0x00030a                  _myU1MODE
+                  0x00030c                  _myU1STA
+                  0x00030e                  _myU1BRG
+                  0x000310                  _myU1TXREG
+                  0x000312                  _myIEC0
+                  0x000314                  _myIFS0
+                  0x000316                  _tx_msg
+                  0x000332                  _delay
+                  0x00034a                  _UART1_init
+                  0x00039a                  _start_uart1_tx
+                  0x0003c0                  _main
                   0xf80000                  __FBS.sec
                   0xf80002                  __FSS.sec
                   0xf80004                  __FGS.sec
 
 External Symbols in Program Memory (by name):
 
-                  0x0002e6                  _UART1_init
-                  0x000324                  _UART_TX
-                  0x0002c8                  __DefaultInterrupt
+                  0x00034a                  _UART1_init
+                  0x000304                  __DefaultInterrupt
                   0xf80000                  __FBS.sec
                   0xf80004                  __FGS.sec
                   0xf80002                  __FSS.sec
+                  0x0002c8                  __U1TXInterrupt
                   0x000252                  __data_init
                   0x000252                  __data_init_standard
                   0x00023c                  __psv_init
                   0x000200                  __resetPRI
-                  0x00034e                  _main
-                  0x0002d2                  _myU1BRG
-                  0x0002ce                  _myU1MODE
-                  0x0002d0                  _myU1STA
-                  0x0002d4                  _myU1TXREG
+                  0x000332                  _delay
+                  0x0003c0                  _main
+                  0x000312                  _myIEC0
+                  0x000314                  _myIFS0
+                  0x00030e                  _myU1BRG
+                  0x00030a                  _myU1MODE
+                  0x00030c                  _myU1STA
+                  0x000310                  _myU1TXREG
+                  0x00039a                  _start_uart1_tx
+                  0x000316                  _tx_msg
 
 Memory Configuration
 
@@ -217,7 +229,7 @@ LOAD c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libfx-elf.a
                   0x000002          0x2 SHORT 0x0 ((ABSOLUTE (__reset) >> 0x10) & 0x7f)
                   0x000003          0x2 SHORT 0x0
 
-.text             0x000200         0xce
+.text             0x000200        0x10a
  *(.init)
  .init            0x000200         0x4c c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(crt0_standard.o)
                   0x000200                  __resetPRI
@@ -229,33 +241,35 @@ LOAD c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libfx-elf.a
  *(.user_init)
  *(.handle)
  *(.isr*)
- .isr             0x0002c8          0x4 default_isr
-                  0x0002c8                  __DefaultInterrupt
+ .isr.text        0x0002c8         0x3c build/default/production/main.o
+                  0x0002c8                  __U1TXInterrupt
+ .isr             0x000304          0x4 default_isr
+                  0x000304                  __DefaultInterrupt
  *(.libc)
  *(.libm)
  *(.libdsp)
  *(.lib*)
  .libpic30_crt_start_mode
-                  0x0002cc          0x2 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(crt_start_mode_normal.Meo)
-                  0x0002cc                  __crt_start_mode
-                  0x0002cc                  __crt_start_mode_normal
+                  0x000308          0x2 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(crt_start_mode_normal.Meo)
+                  0x000308                  __crt_start_mode
+                  0x000308                  __crt_start_mode_normal
 
 usercode
  *(usercode)
 
 __FBS             0xf80000          0x2
  *(__FBS.sec*)
- __FBS.sec        0xf80000          0x2 /CW/_FBS`ÛÍ
+ __FBS.sec        0xf80000          0x2 /CW/_FBS`ÛØ
                   0xf80000                  __FBS.sec
 
 __FSS             0xf80002          0x2
  *(__FSS.sec*)
- __FSS.sec        0xf80002          0x2 /CW/_FSS ›Í
+ __FSS.sec        0xf80002          0x2 /CW/_FSSPËØ
                   0xf80002                  __FSS.sec
 
 __FGS             0xf80004          0x2
  *(__FGS.sec*)
- __FGS.sec        0xf80004          0x2 /CW/_FGS@»Í
+ __FGS.sec        0xf80004          0x2 /CW/_FGS‹Ø
                   0xf80004                  __FGS.sec
 
 __FOSCSEL
@@ -288,26 +302,26 @@ __FUID3
 .comment
  *(.comment)
 
-.debug_info       0x000000        0x560
+.debug_info       0x000000        0x992
  *(.debug_info)
- .debug_info      0x000000        0x560 build/default/production/main.o
+ .debug_info      0x000000        0x992 build/default/production/main.o
  *(.gnu.linkonce.wi.*)
 
-.debug_abbrev     0x000000        0x135
+.debug_abbrev     0x000000        0x161
  *(.debug_abbrev)
- .debug_abbrev    0x000000        0x135 build/default/production/main.o
+ .debug_abbrev    0x000000        0x161 build/default/production/main.o
 
-.debug_line       0x000000         0xa6
+.debug_line       0x000000         0xc6
  *(.debug_line)
- .debug_line      0x000000         0xa6 build/default/production/main.o
+ .debug_line      0x000000         0xc6 build/default/production/main.o
 
-.debug_frame      0x000000         0x62
+.debug_frame      0x000000         0xa8
  *(.debug_frame)
- .debug_frame     0x000000         0x62 build/default/production/main.o
+ .debug_frame     0x000000         0xa8 build/default/production/main.o
 
-.debug_str        0x000000         0x23
+.debug_str        0x000000         0x38
  *(.debug_str)
- .debug_str       0x000000         0x23 build/default/production/main.o
+ .debug_str       0x000000         0x38 build/default/production/main.o
 
 .debug_loc
  *(.debug_loc)
@@ -316,10 +330,10 @@ __FUID3
  *(.debug_macinfo)
 
 .debug_pubnames
-                  0x000000         0x6f
+                  0x000000         0xca
  *(.debug_pubnames)
  .debug_pubnames
-                  0x000000         0x6f build/default/production/main.o
+                  0x000000         0xca build/default/production/main.o
 
 .debug_ranges
  *(.debug_ranges)
@@ -1561,29 +1575,30 @@ LOAD c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libm-elf.a
 LOAD c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-elf.a
 END GROUP
 OUTPUT(dist/default/production/dspic33FJ_test.X.production.elf elf32-pic30)
-LOAD /CW/_FGS@»Í
-LOAD /CW/_FSS ›Í
-LOAD /CW/_FBS`ÛÍ
+LOAD /CW/_FGS‹Ø
+LOAD /CW/_FSSPËØ
+LOAD /CW/_FBS`ÛØ
 LOAD default_isr
 LOAD data_init
 
 .debug_pubtypes
-                  0x000018         0x5a
+                  0x000018         0x6e
  .debug_pubtypes
-                  0x000018         0x5a build/default/production/main.o
+                  0x000018         0x6e build/default/production/main.o
 
 __c30_signature
-                  0x000072         0x12
+                  0x000086         0x12
  __c30_signature
-                  0x000072          0x6 build/default/production/main.o
+                  0x000086          0x6 build/default/production/main.o
  __c30_signature
-                  0x000078          0x6 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(crt0_standard.o)
+                  0x00008c          0x6 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(crt0_standard.o)
  __c30_signature
-                  0x00007e          0x6 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(data_init_standard.o)
+                  0x000092          0x6 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(data_init_standard.o)
 
-.nbss               0x0800          0x2
- .nbss              0x0800          0x2 build/default/production/main.o
-                    0x0800                  _i
+.nbss               0x0800          0x4
+ .nbss              0x0800          0x4 build/default/production/main.o
+                    0x0800                  _uart_tx_ptr
+                    0x0802                  _txIndex
 
 .config_JTAGEN    0xf8000e          0x2
  .config_JTAGEN
@@ -1602,18 +1617,27 @@ __c30_signature
 .config_IESO      0xf80006          0x2
  .config_IESO     0xf80006          0x2 build/default/production/main.o
 
-.const              0x82ce         0x18 load address 0x0002ce  
- .const             0x82ce         0x18 build/default/production/main.o
-                    0x82ce                  _myU1MODE
-                    0x82d0                  _myU1STA
-                    0x82d2                  _myU1BRG
-                    0x82d4                  _myU1TXREG
+.ivt._U1TXInterrupt
+                  0x00002c          0x2
+ .ivt._U1TXInterrupt
+                  0x00002c          0x2 build/default/production/main.o
 
-.text             0x0002e6         0x72
- .text            0x0002e6         0x72 build/default/production/main.o
-                  0x0002e6                  _UART1_init
-                  0x000324                  _UART_TX
-                  0x00034e                  _main
+.const              0x830a         0x28 load address 0x00030a  
+ .const             0x830a         0x28 build/default/production/main.o
+                    0x830a                  _myU1MODE
+                    0x830c                  _myU1STA
+                    0x830e                  _myU1BRG
+                    0x8310                  _myU1TXREG
+                    0x8312                  _myIEC0
+                    0x8314                  _myIFS0
+                    0x8316                  _tx_msg
 
-.dinit            0x000358          0x8
- .dinit           0x000358          0x8 data_init
+.text             0x000332         0xb0
+ .text            0x000332         0xb0 build/default/production/main.o
+                  0x000332                  _delay
+                  0x00034a                  _UART1_init
+                  0x00039a                  _start_uart1_tx
+                  0x0003c0                  _main
+
+.dinit            0x0003e2          0x8
+ .dinit           0x0003e2          0x8 data_init
