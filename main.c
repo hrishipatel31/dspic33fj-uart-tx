@@ -52,6 +52,7 @@
 
 #include <stdint.h>
 #include "my_defines.h"
+
 #define FOSC 7372800UL
 #define Fcy FOSC/2
 #define BAUDRATE 9600
@@ -59,39 +60,54 @@
 #define HIGH_SPEED 4
 #define BRGVAL ((Fcy/BAUDRATE)/HIGH_SPEED)-1
 
-unsigned int i;
-
 
 void UART1_init()
 {
-    myU1MODE->bits.STSEL = 0;   // 1-Stop bit
-    myU1MODE->bits.PDSEL = 0;   // No Parity, 8-Data bits
-    myU1MODE->bits.ABAUD = 0;   // Auto-Baud disabled
-    myU1MODE->bits.BRGH  = 1;   // 0->Standard-Speed mode, 1-> High speed
-    myU1MODE->bits.UARTEN = 1;  // Enable UART
+    myU1MODE->bits.ABAUD     = 0;
+    myU1MODE->bits.BRGH      = 1;    //HIGH SPEED UART
+    myU1MODE->bits.PDSEL     = 0b00; // 8-BIT NO PARITY
+    myU1MODE->bits.STSEL     = 0;    // ONE STOP BIT
+    myU1MODE->bits.UARTEN    = 1;    // ENABLE UART
     
-    myU1STA->bits.UTXEN = 1;    // Enable UART TX
+    myU1BRG->value = BRGVAL ;          // BAUDRATE PRESCALAR
     
-    myU1BRG->value = BRGVAL;    // Baud Rate generator prescalar
-
+    myU1STA->bits.UTXEN = 0b01;        // UART TX ENABLE
 }
 
-void UART_TX(const char *str)
+void UART_TX(char *ch)
 {
-    while (*str != '\0')
+    
+    while(*ch != '\0')
     {
-        while (!myU1STA->bits.TRMT); // Wait for transmit buffer empty
-        myU1TXREG->value = *str;
-    //    U1TXREG = *str;
-        str++;
+        while(myU1STA->bits.UTXBF); // wait if TX buffer is full
+        myU1TXREG->value = *ch;
+        ch++;
     }
+    
+}
+
+uint8_t UART_RX()
+{
+    while(!(myU1STA->bits.URXDA)); // wait until data arrives
+    if(myU1STA->bits.OERR == 1)     // Receive buffer has overflown
+    {
+        myU1STA->bits.OERR = 0;  // reset the receive buffer 
+    }
+    return myU1RXREG->value;
 }
 
 int main(void)
 {
+    char tx_buff[2];
+    
+    
     UART1_init();
-    while (1)
+    UART_TX("UART1 INITIALIZE: \n\r");
+    
+    while(1)
     {
-        UART_TX("HELLO WORLD!\r\n");
+        tx_buff[0] = UART_RX();
+        tx_buff[1] = '\0';  // Adding NULL so that 'uart_TX' can handle it as a string
+        UART_TX(&tx_buff);  // Echo: Transmit this byte directly
     }
 }
