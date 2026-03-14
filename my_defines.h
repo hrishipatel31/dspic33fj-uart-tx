@@ -9,7 +9,7 @@
 #define U1MODE_ADDR   0x0220
 #define U1STA_ADDR    0x0222
 #define U1TXREG_ADDR  0x0224
-#define U1RXREG_ADDR  0x0224
+#define U1RXREG_ADDR  0x0226
 #define U1BRG_ADDR    0x0228
 
 #define IEC0_ADDR     0x0094
@@ -41,7 +41,7 @@ typedef union
 {
     struct
     {
-        uint16_t UR1DA     : 1;
+        uint16_t URXDA     : 1;
         uint16_t OERR      : 1;
         uint16_t FERR      : 1;
         uint16_t PERR      : 1;
@@ -71,6 +71,12 @@ typedef union
     uint8_t value;
     
 }mU1TXREG;
+
+typedef union
+{
+    uint8_t value;
+    
+}mU1RXREG;
 
 typedef union
 {
@@ -124,5 +130,6 @@ volatile mU1MODE * const myU1MODE = (volatile mU1MODE *) U1MODE_ADDR;
 volatile mU1STA * const myU1STA = (volatile mU1STA *) U1STA_ADDR;
 volatile mU1BRG * const myU1BRG = (volatile mU1BRG *) U1BRG_ADDR;
 volatile mU1TXREG * const myU1TXREG = (volatile mU1TXREG *) U1TXREG_ADDR;
+volatile mU1RXREG * const myU1RXREG = (volatile mU1RXREG *) U1RXREG_ADDR;
 volatile mIEC0 * const myIEC0 = (volatile mIEC0 *) IEC0_ADDR;
 volatile mIFS0 * const myIFS0 = (volatile mIFS0 *) IFS0_ADDR;
