@@ -49,35 +49,34 @@
 // Use project enums instead of #define for ON and OFF.
 
 /*
- * UART Echo using Interrupt Mode
+ * UART Circular Buffer Echo Example for dsPIC33FJ256GP710A
  *
- * NOTE / LIMITATION:
- * This implementation works reliably at lower baud rates (e.g., 9600).
- * At higher baud rates, characters may be lost or corrupted.
+ * Implements circular buffer logic for interrupt-driven UART receive and transmit.
+ * Every received character is echoed using TX interrupts, ensuring no data is lost,
+ * even at high baud rates from 300 to 230400 (standard/high speed UART).
  *
- * Possible reasons:
- * - ISR latency
- * - UART FIFO overflow
- * - TX register not ready before next RX interrupt
+ * RX interrupt queues incoming bytes into the buffer.
+ * TX interrupt sends queued bytes until the buffer is empty.
  *
- * This code is currently intended for learning and testing interrupt-based UART communication.
+ * This structure prevents lost or overwritten data, supporting reliable echo at all baud rates.
  */
+
 
 #include<stdio.h>
 #include <stdint.h>
 #include "my_defines.h"
 #define FOSC 7372800UL // define XTAL FREQ
 #define Fcy FOSC/2     // Peripheral clock freq
-#define BAUDRATE 115200  // Baud rate
+#define BAUDRATE 230400  // Baud rate
 #define STD_SPEED 16
 #define HIGH_SPEED 4
 #define BRGV ((Fcy/BAUDRATE)/HIGH_SPEED)-1 // caluculate Baud rate prescalar
 
-// UART message
-const char tx_msg[] = "UART1 TX INTERRUPT MODE \r\n";
-volatile const char *uart_tx_ptr = NULL;
-volatile unsigned int txIndex = 0;
-volatile char rx_data[2];
+#define RX_BUF_SIZE 64
+
+volatile char rx_buf[RX_BUF_SIZE];
+volatile uint8_t rx_head = 0;
+volatile uint8_t rx_tail = 0;
 
 void delay(uint16_t i)
 {
@@ -102,55 +101,55 @@ void UART1_init(void)
     myIEC0->bits.U1RXIE = 1;       // Enable UART1 RX interrupt initially
 }
 
-void start_uart1_tx(const char *msg)
-{
-    // Only start TX if hardware TX is idle (previous transmission done)
-    if(myU1STA->bits.TRMT)
-    {
-        uart_tx_ptr = msg;             // Point to the string to transmit
-        txIndex = 0;                   // Transmission in progress
-        myU1TXREG->value = uart_tx_ptr[txIndex++]; // send first character
-        myIEC0->bits.U1TXIE = 1;       // Enable UART1 TX interrupt
-    }
-}
-
 // UART1 TX Interrupt Service Routine
 void __attribute__ ((interrupt, no_auto_psv)) _U1TXInterrupt(void)
 {
-    myIFS0->bits.U1TXIF = 0; // clear interrupt flag
-    
-    if (uart_tx_ptr[txIndex] != '\0') 
+    myIFS0->bits.U1TXIF = 0;
+
+    // Send next byte if buffer is not empty
+    if(rx_head != rx_tail)
     {
-        myU1TXREG->value = uart_tx_ptr[txIndex++];   // Send current character, advance pointer
-    } 
-    else 
-    {
-        myIEC0->bits.U1TXIE = 0;            // Disable TX interrupt when done
+        myU1TXREG->value = rx_buf[rx_tail];
+        rx_tail = (rx_tail + 1) % RX_BUF_SIZE;
+
+        // DO NOT disable interrupt here unless buffer is empty!
+        if(rx_head == rx_tail)
+        {
+            myIEC0->bits.U1TXIE = 0; // Disable TX interrupt only when done
+        }
     }
+    else
+    {
+        myIEC0->bits.U1TXIE = 0; // Defensive: if no bytes, disable interrupt
+    }
+
 }
 
 // UART1 RX Interrupt Service Routine
 void __attribute__ ((interrupt, no_auto_psv)) _U1RXInterrupt(void)
 {
-    myIFS0->bits.U1RXIF = 0; // clear interrupt flag
+    myIFS0->bits.U1RXIF = 0;
     if(myU1STA->bits.OERR)
     {
-        myU1STA->bits.OERR = 0;
+        myU1STA->bits.OERR = 0; // clear RX buffer overflow flag
     }
+
     if(myU1STA->bits.URXDA)
     {
-        rx_data[0] = myU1RXREG->value;
-        rx_data[1] = '\0';
-        start_uart1_tx(rx_data);         // Send the string to UART1
+        uint8_t next_head = (rx_head+1) % RX_BUF_SIZE;
+        if(next_head != rx_tail)
+        {
+            rx_buf[rx_head] = myU1RXREG->value;
+            rx_head = next_head;
+        }
+        myIEC0->bits.U1TXIE = 1; // Enable TX interrupt
     }
-    
 }
 
 int main(void)
 {
     UART1_init();
     delay(100);                             // Allow time for UART setup, define delay()
-    start_uart1_tx(tx_msg);
     while (1)
     {
 

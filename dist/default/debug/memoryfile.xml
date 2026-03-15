@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project>
-  <executable name="dist/default/production/dspic33FJ_test.X.production.elf">
+  <executable name="dist/default/debug/dspic33FJ_test.X.debug.elf">
     <memory name="data">
       <units>bytes</units>
       <length>30720</length>
-      <used>4</used>
-      <free>30716</free>
+      <used>84</used>
+      <free>30636</free>
     </memory>
     <memory name="program">
       <units>bytes</units>
