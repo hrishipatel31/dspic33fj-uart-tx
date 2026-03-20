@@ -142,7 +142,7 @@ void process_modbus_requests(void)
     if (modbus_crc16(req, 6) != req_crc) return;
 
     // Build response dynamically: 3 header + (num_regs*2) data + 2 CRC
-    uint8_t resp[3 + HOLDING_REG_COUNT*2 + 2]; // Max buffer size
+    uint8_t resp[3 + num_regs*2 + 2]; // Max buffer size
     resp[0] = MODBUS_SLAVE_ADDR;
     resp[1] = 0x03;
     resp[2] = num_regs * 2; // byte count (2 bytes per register)
