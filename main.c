@@ -66,6 +66,8 @@
 #define HOLDING_REG_COUNT   64
 #define UART_RX_BUF_SIZE    64
 
+#define UART_TX_BUF_SIZE    (3 + HOLDING_REG_COUNT*2 + 2)
+
 uint16_t holding_regs[HOLDING_REG_COUNT] = 
 {
     0x1111, 0x2222, 0x3333, 0x4444, 0x5555, 0x6666, 0x7777, 0x8888, 0x9999, 0xAAAA, 0xABCD, 0xBBBB, 0xCCCC, 0xDDDD, 0xEEEE, 0xFFFF, 
@@ -76,6 +78,8 @@ uint16_t holding_regs[HOLDING_REG_COUNT] =
 
 volatile uint8_t uart_rx_buf[UART_RX_BUF_SIZE];
 volatile uint8_t uart_rx_idx = 0;
+
+volatile uint8_t uart_tx_buf[UART_TX_BUF_SIZE];
 
 // --- CRC16 Modbus ---
 uint16_t modbus_crc16(uint8_t *data, uint16_t length) {
@@ -149,25 +153,25 @@ void process_modbus_requests(void)
     if (modbus_crc16(req, 6) != req_crc) return;
 
     // Build response dynamically: 3 header + (length*2) data + 2 CRC
-    uint8_t resp[3 + length*2 + 2]; // Max buffer size
-    resp[0] = MODBUS_SLAVE_ADDR;
-    resp[1] = 0x03;
-    resp[2] = length * 2; // byte count (2 bytes per register)
+//    uint8_t resp[3 + HOLDING_REG_COUNT*2 + 2]; // Max buffer size
+    uart_tx_buf[0] = MODBUS_SLAVE_ADDR;
+    uart_tx_buf[1] = 0x03;
+    uart_tx_buf[2] = length * 2; // byte count (2 bytes per register)
 
     uint16_t idx = 3;
     for (uint16_t i = (start_addr); i < (length + start_addr); i++) {
-        resp[idx++] = (holding_regs[i] >> 8) & 0xFF;
-        resp[idx++] = holding_regs[i] & 0xFF;
+        uart_tx_buf[idx++] = (holding_regs[i] >> 8) & 0xFF;
+        uart_tx_buf[idx++] = holding_regs[i] & 0xFF;
     }
 
-    uint16_t resp_crc = modbus_crc16(resp, idx);
-    resp[idx++] = resp_crc & 0xFF;          // CRC low
-    resp[idx++] = (resp_crc >> 8) & 0xFF;   // CRC high
+    uint16_t resp_crc = modbus_crc16(uart_tx_buf, idx);
+    uart_tx_buf[idx++] = resp_crc & 0xFF;          // CRC low
+    uart_tx_buf[idx++] = (resp_crc >> 8) & 0xFF;   // CRC high
 
     // Send response
     for (uint16_t i = 0; i < idx; i++) {
         while (myU1STA->bits.UTXBF); // Wait until ready
-        myU1TXREG->value = resp[i];
+        myU1TXREG->value = uart_tx_buf[i];
     }
 
     uart_rx_idx = 0; // Reset buffer

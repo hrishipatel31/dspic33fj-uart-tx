@@ -88,10 +88,10 @@ section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
 .text                        0x200               0x112           0x19b  (411)
 .const                       0x312                 0xe            0x15  (21)
-.text                        0x320               0x22a           0x33f  (831)
-.dinit                       0x54a                0x6a            0x9f  (159)
+.text                        0x320               0x20c           0x312  (786)
+.dinit                       0x52c                0x6a            0x9f  (159)
 
-                 Total "program" memory used (bytes):          0x58e  (1422) <1%
+                 Total "program" memory used (bytes):          0x561  (1377) <1%
 
 
 "data" Memory  [Origin = 0x800, Length = 0x7800]
@@ -99,10 +99,10 @@ section                    address   length (PC units)   length (bytes) (dec)
 section                    address      alignment gaps    total length  (dec)
 -------                    -------      --------------    -------------------
 .nbss                        0x800                   0             0x2  (2)
-.data                        0x802                   0            0x80  (128)
-.bss                         0x882                   0            0x40  (64)
+.bss                         0x802                   0            0xc6  (198)
+.data                        0x8c8                   0            0x80  (128)
 
-                 Total "data" memory used (bytes):           0xc2  (194) <1%
+                 Total "data" memory used (bytes):          0x148  (328) 1%
 
 
 Dynamic Memory Usage
@@ -110,9 +110,9 @@ Dynamic Memory Usage
 region                     address                      maximum length  (dec)
 ------                     -------                      ---------------------
 heap                             0                                   0  (0)
-stack                        0x8c2                              0x773e  (30526)
+stack                        0x948                              0x76b8  (30392)
 
-                 Maximum dynamic memory (bytes):         0x773e  (30526)
+                 Maximum dynamic memory (bytes):         0x76b8  (30392)
 
 Info: Project is using a large data memory model when small data memory model is sufficient.
 
@@ -120,14 +120,16 @@ Info: Project is using a large data memory model when small data memory model is
 External Symbols in Data Memory (by address):
 
                     0x0800                  _uart_rx_idx
-                    0x0802                  _holding_regs
-                    0x0882                  _uart_rx_buf
+                    0x0802                  _uart_rx_buf
+                    0x0842                  _uart_tx_buf
+                    0x08c8                  _holding_regs
 
 External Symbols in Data Memory (by name):
 
-                    0x0802                  _holding_regs
-                    0x0882                  _uart_rx_buf
+                    0x08c8                  _holding_regs
+                    0x0802                  _uart_rx_buf
                     0x0800                  _uart_rx_idx
+                    0x0842                  _uart_tx_buf
 
 External Symbols in Program Memory (by address):
 
@@ -148,7 +150,7 @@ External Symbols in Program Memory (by address):
                   0x00037c                  _delay
                   0x000394                  _UART1_init
                   0x0003e4                  _process_modbus_requests
-                  0x00053e                  _main
+                  0x000520                  _main
                   0xf80000                  __FBS.sec
                   0xf80002                  __FSS.sec
                   0xf80004                  __FGS.sec
@@ -166,7 +168,7 @@ External Symbols in Program Memory (by name):
                   0x00023c                  __psv_init
                   0x000200                  __resetPRI
                   0x00037c                  _delay
-                  0x00053e                  _main
+                  0x000520                  _main
                   0x000320                  _modbus_crc16
                   0x00031c                  _myIEC0
                   0x00031e                  _myIFS0
@@ -265,17 +267,17 @@ usercode
 
 __FBS             0xf80000          0x2
  *(__FBS.sec*)
- __FBS.sec        0xf80000          0x2 /CW/_FBS ·Õ
+ __FBS.sec        0xf80000          0x2 /CW/_FBSàªÒ
                   0xf80000                  __FBS.sec
 
 __FSS             0xf80002          0x2
  *(__FSS.sec*)
- __FSS.sec        0xf80002          0x2 /CW/_FSS§Õ
+ __FSS.sec        0xf80002          0x2 /CW/_FSSÐšÒ
                   0xf80002                  __FSS.sec
 
 __FGS             0xf80004          0x2
  *(__FGS.sec*)
- __FGS.sec        0xf80004          0x2 /CW/_FGSÀ×Õ
+ __FGS.sec        0xf80004          0x2 /CW/_FGS
                   0xf80004                  __FGS.sec
 
 __FOSCSEL
@@ -308,26 +310,26 @@ __FUID3
 .comment
  *(.comment)
 
-.debug_info       0x000000        0xb0a
+.debug_info       0x000000        0xb1e
  *(.debug_info)
- .debug_info      0x000000        0xb0a build/default/production/main.o
+ .debug_info      0x000000        0xb1e build/default/production/main.o
  *(.gnu.linkonce.wi.*)
 
-.debug_abbrev     0x000000        0x18e
+.debug_abbrev     0x000000        0x185
  *(.debug_abbrev)
- .debug_abbrev    0x000000        0x18e build/default/production/main.o
+ .debug_abbrev    0x000000        0x185 build/default/production/main.o
 
-.debug_line       0x000000         0xf4
+.debug_line       0x000000         0xf5
  *(.debug_line)
- .debug_line      0x000000         0xf4 build/default/production/main.o
+ .debug_line      0x000000         0xf5 build/default/production/main.o
 
-.debug_frame      0x000000         0xca
+.debug_frame      0x000000         0xc2
  *(.debug_frame)
- .debug_frame     0x000000         0xca build/default/production/main.o
+ .debug_frame     0x000000         0xc2 build/default/production/main.o
 
-.debug_str        0x000000         0x5b
+.debug_str        0x000000         0x67
  *(.debug_str)
- .debug_str       0x000000         0x5b build/default/production/main.o
+ .debug_str       0x000000         0x67 build/default/production/main.o
 
 .debug_loc
  *(.debug_loc)
@@ -336,10 +338,10 @@ __FUID3
  *(.debug_macinfo)
 
 .debug_pubnames
-                  0x000000         0xfc
+                  0x000000        0x10c
  *(.debug_pubnames)
  .debug_pubnames
-                  0x000000         0xfc build/default/production/main.o
+                  0x000000        0x10c build/default/production/main.o
 
 .debug_ranges
  *(.debug_ranges)
@@ -1581,9 +1583,9 @@ LOAD c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libm-elf.a
 LOAD c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-elf.a
 END GROUP
 OUTPUT(dist/default/production/dspic33FJ_test.X.production.elf elf32-pic30)
-LOAD /CW/_FGSÀ×Õ
-LOAD /CW/_FSS§Õ
-LOAD /CW/_FBS ·Õ
+LOAD /CW/_FGS
+LOAD /CW/_FSSÐšÒ
+LOAD /CW/_FBSàªÒ
 LOAD default_isr
 LOAD data_init
 
@@ -1605,13 +1607,14 @@ __c30_signature
  .nbss              0x0800          0x2 build/default/production/main.o
                     0x0800                  _uart_rx_idx
 
-.data               0x0802         0x80
- .data              0x0802         0x80 build/default/production/main.o
-                    0x0802                  _holding_regs
+.bss                0x0802         0xc6
+ .bss               0x0802         0xc6 build/default/production/main.o
+                    0x0802                  _uart_rx_buf
+                    0x0842                  _uart_tx_buf
 
-.bss                0x0882         0x40
- .bss               0x0882         0x40 build/default/production/main.o
-                    0x0882                  _uart_rx_buf
+.data               0x08c8         0x80
+ .data              0x08c8         0x80 build/default/production/main.o
+                    0x08c8                  _holding_regs
 
 .config_JTAGEN    0xf8000e          0x2
  .config_JTAGEN
@@ -1645,13 +1648,13 @@ __c30_signature
                     0x831c                  _myIEC0
                     0x831e                  _myIFS0
 
-.text             0x000320        0x22a
- .text            0x000320        0x22a build/default/production/main.o
+.text             0x000320        0x20c
+ .text            0x000320        0x20c build/default/production/main.o
                   0x000320                  _modbus_crc16
                   0x00037c                  _delay
                   0x000394                  _UART1_init
                   0x0003e4                  _process_modbus_requests
-                  0x00053e                  _main
+                  0x000520                  _main
 
-.dinit            0x00054a         0x6a
- .dinit           0x00054a         0x6a data_init
+.dinit            0x00052c         0x6a
+ .dinit           0x00052c         0x6a data_init
