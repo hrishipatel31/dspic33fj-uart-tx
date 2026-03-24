@@ -126,32 +126,38 @@ void __attribute__ ((interrupt, no_auto_psv)) _U1RXInterrupt(void)
 // --- Parse Modbus request and reply ---
 void process_modbus_requests(void) 
 {
-    if (uart_rx_idx < 8) return;
+    if(uart_rx_idx < 8)
+    {
+        return;
+    }
 
     uint8_t *req = (uint8_t *)uart_rx_buf;
     uint16_t start_addr = (req[2] << 8) | req[3];   // Start address (Modbus)
-    uint16_t num_regs   = (req[4] << 8) | req[5];   // Quantity
+    uint16_t length   = (req[4] << 8) | req[5];   // Quantity
 
     // Address check: Allow 0 or 1 as start address (most pollers use 1)
-    if ((start_addr != 0 && start_addr != 1)) return;
+//    if ((start_addr != 0 && start_addr != 1)) return;
+    if((start_addr != 1 && start_addr > HOLDING_REG_COUNT) || (start_addr != 1 && length >(HOLDING_REG_COUNT - start_addr)) )
+    {
+        return;
+    }
     // Length check: up to HOLDING_REG_COUNT only
-    if (num_regs == 0 || num_regs > HOLDING_REG_COUNT) return;
+//    if (length == 0 || length > HOLDING_REG_COUNT) return;
 
     // CRC check (low byte first)
     uint16_t req_crc = (req[7] << 8) | req[6];
     if (modbus_crc16(req, 6) != req_crc) return;
 
-    // Build response dynamically: 3 header + (num_regs*2) data + 2 CRC
-    uint8_t resp[3 + num_regs*2 + 2]; // Max buffer size
+    // Build response dynamically: 3 header + (length*2) data + 2 CRC
+    uint8_t resp[3 + length*2 + 2]; // Max buffer size
     resp[0] = MODBUS_SLAVE_ADDR;
     resp[1] = 0x03;
-    resp[2] = num_regs * 2; // byte count (2 bytes per register)
+    resp[2] = length * 2; // byte count (2 bytes per register)
 
     uint16_t idx = 3;
-    uint16_t reg_offset = (start_addr == 0) ? 0 : 1; // Modbus addressing
-    for (uint16_t i = 0; i < num_regs; i++) {
-        resp[idx++] = (holding_regs[i + reg_offset] >> 8) & 0xFF;
-        resp[idx++] = holding_regs[i + reg_offset] & 0xFF;
+    for (uint16_t i = (start_addr); i < (length + start_addr); i++) {
+        resp[idx++] = (holding_regs[i] >> 8) & 0xFF;
+        resp[idx++] = holding_regs[i] & 0xFF;
     }
 
     uint16_t resp_crc = modbus_crc16(resp, idx);
