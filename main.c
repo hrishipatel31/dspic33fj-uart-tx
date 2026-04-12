@@ -3,9 +3,10 @@
  * Responds to function code 0x03 (Read Holding Registers) for addresses 1–64.
  * Slave address: 0x01 (decimal 10)
  * Connects via UART1 at 9600 baud, 8N1.
+ * Tested Baud Rates from 9600 to 38,400 at standard UART speed and works, at High speed uart only 9600 BR works
  * Polling tools can read up to 64 holding registers.
  * Author: hpatel
- * Created: Feb 25, 2026
+ * Created: April 12, 2026
  */
 // DSPIC33FJ256GP710A Configuration Bit Settings
 
@@ -55,14 +56,16 @@
 #include<stdio.h>
 #include <stdint.h>
 #include "my_defines.h"
+
 #define FOSC 7372800UL // define XTAL FREQ
 #define Fcy FOSC/2     // Peripheral clock freq
 #define BAUDRATE 9600  // Baud rate
 #define STD_SPEED 16
 #define HIGH_SPEED 4
-#define BRGV ((Fcy/BAUDRATE)/HIGH_SPEED)-1 // caluculate Baud rate prescalar
+#define BRGV ((Fcy/BAUDRATE)/STD_SPEED)-1 // caluculate Baud rate prescalar
 
 #define MODBUS_SLAVE_ADDR   0x01
+#define READ_HOLDING_REGISTER 0x03
 #define HOLDING_REG_COUNT   64
 #define UART_RX_BUF_SIZE    64
 
@@ -80,6 +83,10 @@ volatile uint8_t uart_rx_buf[UART_RX_BUF_SIZE];
 volatile uint8_t uart_rx_idx = 0;
 
 volatile uint8_t uart_tx_buf[UART_TX_BUF_SIZE];
+
+volatile uint16_t uart_tx_count = 0;
+volatile uint16_t uart_tx_len = 0;
+volatile uint8_t uart_tx_busy = 0;
 
 // --- CRC16 Modbus ---
 uint16_t modbus_crc16(uint8_t *data, uint16_t length) {
@@ -106,12 +113,27 @@ void UART1_init(void)
     myU1MODE->bits.STSEL = 0;      // 1 Stop bit
     myU1MODE->bits.PDSEL = 0b00;   // No Parity, 8 Data bits
     myU1MODE->bits.ABAUD = 0;      // Auto-Baud disabled
-    myU1MODE->bits.BRGH  = 1;      // High speed
+    myU1MODE->bits.BRGH  = 0;      // High speed
     myU1MODE->bits.UARTEN = 1;     // Enable UART
     myU1MODE->bits.UEN    = 0b00;  // TX & RX only
     myU1STA->bits.UTXEN = 1;       // Enable TX
     myU1BRG->value = BRGV;         // Set baud rate (define BRGV appropriately)
     myIEC0->bits.U1RXIE = 1;
+}
+
+// --- UART TX Interrupt ---
+void __attribute__ ((interrupt, no_auto_psv)) _U1TXInterrupt(void)
+{
+    myIFS0->bits.U1TXIF = 0; // Clear flag
+
+    if(uart_tx_count < uart_tx_len) {
+        myU1TXREG->value = uart_tx_buf[uart_tx_count++];
+    } else {
+        myIEC0->bits.U1TXIE = 0; // Disable TX interrupt
+        uart_tx_busy = 0;
+        uart_tx_count = 0;
+        uart_tx_len = 0;
+    }
 }
 
 // --- UART RX Interrupt (called when RX byte arrives) ---
@@ -155,7 +177,7 @@ void process_modbus_requests(void)
     // Build response dynamically: 3 header + (length*2) data + 2 CRC
 //    uint8_t resp[3 + HOLDING_REG_COUNT*2 + 2]; // Max buffer size
     uart_tx_buf[0] = MODBUS_SLAVE_ADDR;
-    uart_tx_buf[1] = 0x03;
+    uart_tx_buf[1] = READ_HOLDING_REGISTER;
     uart_tx_buf[2] = length * 2; // byte count (2 bytes per register)
 
     uint16_t idx = 3;
@@ -167,11 +189,15 @@ void process_modbus_requests(void)
     uint16_t resp_crc = modbus_crc16(uart_tx_buf, idx);
     uart_tx_buf[idx++] = resp_crc & 0xFF;          // CRC low
     uart_tx_buf[idx++] = (resp_crc >> 8) & 0xFF;   // CRC high
-
-    // Send response
-    for (uint16_t i = 0; i < idx; i++) {
-        while (myU1STA->bits.UTXBF); // Wait until ready
-        myU1TXREG->value = uart_tx_buf[i];
+    
+    // --- TX Interrupt-based Send (non-blocking) ---
+    if(!uart_tx_busy) 
+    {
+        uart_tx_count = 1;
+        uart_tx_len = idx;
+        uart_tx_busy = 1;
+        myU1TXREG->value = uart_tx_buf[0]; // Send first byte -- Kick start
+        myIEC0->bits.U1TXIE = 1;           // TX interrupt enable
     }
 
     uart_rx_idx = 0; // Reset buffer
