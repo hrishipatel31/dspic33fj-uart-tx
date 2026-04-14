@@ -3,7 +3,7 @@
  * Responds to function code 0x03 (Read Holding Registers) for addresses 1–64.
  * Slave address: 0x01 (decimal 10)
  * Connects via UART1 at 9600 baud, 8N1.
- * Tested Baud Rates from 9600 to 38,400 at standard UART speed and works, at High speed uart only 9600 BR works
+ * Tested Baud Rates from 9600 to 115200 at standard UART speed and at High speed UART, and it works!!!
  * Polling tools can read up to 64 holding registers.
  * Author: hpatel
  * Created: April 12, 2026
@@ -59,10 +59,10 @@
 
 #define FOSC 7372800UL // define XTAL FREQ
 #define Fcy FOSC/2     // Peripheral clock freq
-#define BAUDRATE 9600  // Baud rate
+#define BAUDRATE 115200  // Baud rate
 #define STD_SPEED 16
 #define HIGH_SPEED 4
-#define BRGV ((Fcy/BAUDRATE)/STD_SPEED)-1 // caluculate Baud rate prescalar
+#define BRGV ((Fcy/BAUDRATE)/HIGH_SPEED)-1 // caluculate Baud rate prescalar
 
 #define MODBUS_SLAVE_ADDR   0x01
 #define READ_HOLDING_REGISTER 0x03
@@ -113,7 +113,7 @@ void UART1_init(void)
     myU1MODE->bits.STSEL = 0;      // 1 Stop bit
     myU1MODE->bits.PDSEL = 0b00;   // No Parity, 8 Data bits
     myU1MODE->bits.ABAUD = 0;      // Auto-Baud disabled
-    myU1MODE->bits.BRGH  = 0;      // High speed
+    myU1MODE->bits.BRGH  = 1;      // High speed
     myU1MODE->bits.UARTEN = 1;     // Enable UART
     myU1MODE->bits.UEN    = 0b00;  // TX & RX only
     myU1STA->bits.UTXEN = 1;       // Enable TX
@@ -126,9 +126,13 @@ void __attribute__ ((interrupt, no_auto_psv)) _U1TXInterrupt(void)
 {
     myIFS0->bits.U1TXIF = 0; // Clear flag
 
-    if(uart_tx_count < uart_tx_len) {
+    if(uart_tx_count < uart_tx_len) 
+    {
+        while(!myU1STA->bits.TRMT);
         myU1TXREG->value = uart_tx_buf[uart_tx_count++];
-    } else {
+    } 
+    else 
+    {
         myIEC0->bits.U1TXIE = 0; // Disable TX interrupt
         uart_tx_busy = 0;
         uart_tx_count = 0;

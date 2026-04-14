@@ -86,12 +86,12 @@ Default Scalar Model: Small
 
 section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
-.text                        0x200               0x14e           0x1f5  (501)
-.const                       0x34e                 0xe            0x15  (21)
-.text                        0x35c               0x202           0x303  (771)
-.dinit                       0x55e                0x6a            0x9f  (159)
+.text                        0x200               0x15c           0x20a  (522)
+.const                       0x35c                 0xe            0x15  (21)
+.text                        0x36a               0x202           0x303  (771)
+.dinit                       0x56c                0x6a            0x9f  (159)
 
-                 Total "program" memory used (bytes):          0x5ac  (1452) <1%
+                 Total "program" memory used (bytes):          0x5c1  (1473) <1%
 
 
 "data" Memory  [Origin = 0x800, Length = 0x7800]
@@ -144,48 +144,48 @@ External Symbols in Program Memory (by address):
                   0x000252                  __data_init_standard
                   0x000252                  __data_init
                   0x0002c8                  __U1TXInterrupt
-                  0x000304                  __U1RXInterrupt
-                  0x000348                  __DefaultInterrupt
-                  0x00034e                  _myU1MODE
-                  0x000350                  _myU1STA
-                  0x000352                  _myU1BRG
-                  0x000354                  _myU1TXREG
-                  0x000356                  _myU1RXREG
-                  0x000358                  _myIEC0
-                  0x00035a                  _myIFS0
-                  0x00035c                  _modbus_crc16
-                  0x0003b8                  _delay
-                  0x0003d0                  _UART1_init
-                  0x000420                  _process_modbus_requests
-                  0x000552                  _main
+                  0x000312                  __U1RXInterrupt
+                  0x000356                  __DefaultInterrupt
+                  0x00035c                  _myU1MODE
+                  0x00035e                  _myU1STA
+                  0x000360                  _myU1BRG
+                  0x000362                  _myU1TXREG
+                  0x000364                  _myU1RXREG
+                  0x000366                  _myIEC0
+                  0x000368                  _myIFS0
+                  0x00036a                  _modbus_crc16
+                  0x0003c6                  _delay
+                  0x0003de                  _UART1_init
+                  0x00042e                  _process_modbus_requests
+                  0x000560                  _main
                   0xf80000                  __FBS.sec
                   0xf80002                  __FSS.sec
                   0xf80004                  __FGS.sec
 
 External Symbols in Program Memory (by name):
 
-                  0x0003d0                  _UART1_init
-                  0x000348                  __DefaultInterrupt
+                  0x0003de                  _UART1_init
+                  0x000356                  __DefaultInterrupt
                   0xf80000                  __FBS.sec
                   0xf80004                  __FGS.sec
                   0xf80002                  __FSS.sec
-                  0x000304                  __U1RXInterrupt
+                  0x000312                  __U1RXInterrupt
                   0x0002c8                  __U1TXInterrupt
                   0x000252                  __data_init
                   0x000252                  __data_init_standard
                   0x00023c                  __psv_init
                   0x000200                  __resetPRI
-                  0x0003b8                  _delay
-                  0x000552                  _main
-                  0x00035c                  _modbus_crc16
-                  0x000358                  _myIEC0
-                  0x00035a                  _myIFS0
-                  0x000352                  _myU1BRG
-                  0x00034e                  _myU1MODE
-                  0x000356                  _myU1RXREG
-                  0x000350                  _myU1STA
-                  0x000354                  _myU1TXREG
-                  0x000420                  _process_modbus_requests
+                  0x0003c6                  _delay
+                  0x000560                  _main
+                  0x00036a                  _modbus_crc16
+                  0x000366                  _myIEC0
+                  0x000368                  _myIFS0
+                  0x000360                  _myU1BRG
+                  0x00035c                  _myU1MODE
+                  0x000364                  _myU1RXREG
+                  0x00035e                  _myU1STA
+                  0x000362                  _myU1TXREG
+                  0x00042e                  _process_modbus_requests
 
 Memory Configuration
 
@@ -245,7 +245,7 @@ LOAD c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libfx-elf.a
                   0x000002          0x2 SHORT 0x0 ((ABSOLUTE (__reset) >> 0x10) & 0x7f)
                   0x000003          0x2 SHORT 0x0
 
-.text             0x000200        0x14e
+.text             0x000200        0x15c
  *(.init)
  .init            0x000200         0x4c c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(crt0_standard.o)
                   0x000200                  __resetPRI
@@ -257,36 +257,36 @@ LOAD c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libfx-elf.a
  *(.user_init)
  *(.handle)
  *(.isr*)
- .isr.text        0x0002c8         0x80 build/default/production/main.o
+ .isr.text        0x0002c8         0x8e build/default/production/main.o
                   0x0002c8                  __U1TXInterrupt
-                  0x000304                  __U1RXInterrupt
- .isr             0x000348          0x4 default_isr
-                  0x000348                  __DefaultInterrupt
+                  0x000312                  __U1RXInterrupt
+ .isr             0x000356          0x4 default_isr
+                  0x000356                  __DefaultInterrupt
  *(.libc)
  *(.libm)
  *(.libdsp)
  *(.lib*)
  .libpic30_crt_start_mode
-                  0x00034c          0x2 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(crt_start_mode_normal.Meo)
-                  0x00034c                  __crt_start_mode
-                  0x00034c                  __crt_start_mode_normal
+                  0x00035a          0x2 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(crt_start_mode_normal.Meo)
+                  0x00035a                  __crt_start_mode
+                  0x00035a                  __crt_start_mode_normal
 
 usercode
  *(usercode)
 
 __FBS             0xf80000          0x2
  *(__FBS.sec*)
- __FBS.sec        0xf80000          0x2 /CW/_FBS ÊÑ
+ __FBS.sec        0xf80000          0x2 /CW/_FBS «×
                   0xf80000                  __FBS.sec
 
 __FSS             0xf80002          0x2
  *(__FSS.sec*)
- __FSS.sec        0xf80002          0x2 /CW/_FSS0ÚÑ
+ __FSS.sec        0xf80002          0x2 /CW/_FSS@Ë×
                   0xf80002                  __FSS.sec
 
 __FGS             0xf80004          0x2
  *(__FGS.sec*)
- __FGS.sec        0xf80004          0x2 /CW/_FGSÐyÑ
+ __FGS.sec        0xf80004          0x2 /CW/_FGS0»×
                   0xf80004                  __FGS.sec
 
 __FOSCSEL
@@ -328,9 +328,9 @@ __FUID3
  *(.debug_abbrev)
  .debug_abbrev    0x000000        0x17a build/default/production/main.o
 
-.debug_line       0x000000        0x100
+.debug_line       0x000000        0x101
  *(.debug_line)
- .debug_line      0x000000        0x100 build/default/production/main.o
+ .debug_line      0x000000        0x101 build/default/production/main.o
 
 .debug_frame      0x000000         0xee
  *(.debug_frame)
@@ -1592,9 +1592,9 @@ LOAD c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libm-elf.a
 LOAD c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-elf.a
 END GROUP
 OUTPUT(dist/default/production/dspic33FJ_test.X.production.elf elf32-pic30)
-LOAD /CW/_FGSÐyÑ
-LOAD /CW/_FSS0ÚÑ
-LOAD /CW/_FBS ÊÑ
+LOAD /CW/_FGS0»×
+LOAD /CW/_FSS@Ë×
+LOAD /CW/_FBS «×
 LOAD default_isr
 LOAD data_init
 
@@ -1655,23 +1655,23 @@ __c30_signature
  .ivt._U1RXInterrupt
                   0x00002a          0x2 build/default/production/main.o
 
-.const              0x834e          0xe load address 0x00034e  
- .const             0x834e          0xe build/default/production/main.o
-                    0x834e                  _myU1MODE
-                    0x8350                  _myU1STA
-                    0x8352                  _myU1BRG
-                    0x8354                  _myU1TXREG
-                    0x8356                  _myU1RXREG
-                    0x8358                  _myIEC0
-                    0x835a                  _myIFS0
+.const              0x835c          0xe load address 0x00035c  
+ .const             0x835c          0xe build/default/production/main.o
+                    0x835c                  _myU1MODE
+                    0x835e                  _myU1STA
+                    0x8360                  _myU1BRG
+                    0x8362                  _myU1TXREG
+                    0x8364                  _myU1RXREG
+                    0x8366                  _myIEC0
+                    0x8368                  _myIFS0
 
-.text             0x00035c        0x202
- .text            0x00035c        0x202 build/default/production/main.o
-                  0x00035c                  _modbus_crc16
-                  0x0003b8                  _delay
-                  0x0003d0                  _UART1_init
-                  0x000420                  _process_modbus_requests
-                  0x000552                  _main
+.text             0x00036a        0x202
+ .text            0x00036a        0x202 build/default/production/main.o
+                  0x00036a                  _modbus_crc16
+                  0x0003c6                  _delay
+                  0x0003de                  _UART1_init
+                  0x00042e                  _process_modbus_requests
+                  0x000560                  _main
 
-.dinit            0x00055e         0x6a
- .dinit           0x00055e         0x6a data_init
+.dinit            0x00056c         0x6a
+ .dinit           0x00056c         0x6a data_init
