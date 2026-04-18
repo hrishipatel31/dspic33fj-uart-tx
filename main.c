@@ -53,168 +53,34 @@
 // Use project enums instead of #define for ON and OFF.
 
 
-#include<stdio.h>
 #include <stdint.h>
-#include "my_defines.h"
+#include "modbus.h"
+#include "modbus_port.h"
 
-#define FOSC 7372800UL // define XTAL FREQ
-#define Fcy FOSC/2     // Peripheral clock freq
-#define BAUDRATE 115200  // Baud rate
-#define STD_SPEED 16
-#define HIGH_SPEED 4
-#define BRGV ((Fcy/BAUDRATE)/HIGH_SPEED)-1 // caluculate Baud rate prescalar
-
-#define MODBUS_SLAVE_ADDR   0x01
-#define READ_HOLDING_REGISTER 0x03
-#define HOLDING_REG_COUNT   64
 #define UART_RX_BUF_SIZE    64
-
 #define UART_TX_BUF_SIZE    (3 + HOLDING_REG_COUNT*2 + 2)
 
-uint16_t holding_regs[HOLDING_REG_COUNT] = 
-{
+// --- User application holding registers ---
+uint16_t holding_regs[HOLDING_REG_COUNT] = {
     0x1111, 0x2222, 0x3333, 0x4444, 0x5555, 0x6666, 0x7777, 0x8888, 0x9999, 0xAAAA, 0xABCD, 0xBBBB, 0xCCCC, 0xDDDD, 0xEEEE, 0xFFFF, 
     0x1111, 0x2222, 0x3333, 0x4444, 0x5555, 0x6666, 0x7777, 0x8888, 0x9999, 0xAAAA, 0xABCD, 0xBBBB, 0xCCCC, 0xDDDD, 0xEEEE, 0xFFFF, 
     0x1111, 0x2222, 0x3333, 0x4444, 0x5555, 0x6666, 0x7777, 0x8888, 0x9999, 0xAAAA, 0xABCD, 0xBBBB, 0xCCCC, 0xDDDD, 0xEEEE, 0xFFFF, 
     0x1111, 0x2222, 0x3333, 0x4444, 0x5555, 0x6666, 0x7777, 0x8888, 0x9999, 0xAAAA, 0xABCD, 0xBBBB, 0xCCCC, 0xDDDD, 0xEEEE, 0xFFFF
 };
 
-volatile uint8_t uart_rx_buf[UART_RX_BUF_SIZE];
-volatile uint8_t uart_rx_idx = 0;
+// --- Modbus RX/TX Buffers ---
+uint8_t modbus_rx_buf[UART_RX_BUF_SIZE];
+uint8_t modbus_tx_buf[UART_TX_BUF_SIZE];
 
-volatile uint8_t uart_tx_buf[UART_TX_BUF_SIZE];
-
-volatile uint16_t uart_tx_count = 0;
-volatile uint16_t uart_tx_len = 0;
-volatile uint8_t uart_tx_busy = 0;
-
-// --- CRC16 Modbus ---
-uint16_t modbus_crc16(uint8_t *data, uint16_t length) {
-    uint16_t crc = 0xFFFF;
-    for (uint16_t pos = 0; pos < length; pos++) {
-        crc ^= data[pos];
-        for (uint8_t i = 0; i < 8; i++) {
-            if (crc & 1)
-                crc = (crc >> 1) ^ 0xA001;
-            else
-                crc >>= 1;
-        }
-    }
-    return crc;
-}
-
-void delay(uint16_t i)
-{
-    for(uint16_t j=0; j < i; j++ ) { ; }
-}
-
-void UART1_init(void)
-{
-    myU1MODE->bits.STSEL = 0;      // 1 Stop bit
-    myU1MODE->bits.PDSEL = 0b00;   // No Parity, 8 Data bits
-    myU1MODE->bits.ABAUD = 0;      // Auto-Baud disabled
-    myU1MODE->bits.BRGH  = 1;      // High speed
-    myU1MODE->bits.UARTEN = 1;     // Enable UART
-    myU1MODE->bits.UEN    = 0b00;  // TX & RX only
-    myU1STA->bits.UTXEN = 1;       // Enable TX
-    myU1BRG->value = BRGV;         // Set baud rate (define BRGV appropriately)
-    myIEC0->bits.U1RXIE = 1;
-}
-
-// --- UART TX Interrupt ---
-void __attribute__ ((interrupt, no_auto_psv)) _U1TXInterrupt(void)
-{
-    myIFS0->bits.U1TXIF = 0; // Clear flag
-
-    if(uart_tx_count < uart_tx_len) 
-    {
-        while(!myU1STA->bits.TRMT);
-        myU1TXREG->value = uart_tx_buf[uart_tx_count++];
-    } 
-    else 
-    {
-        myIEC0->bits.U1TXIE = 0; // Disable TX interrupt
-        uart_tx_busy = 0;
-        uart_tx_count = 0;
-        uart_tx_len = 0;
-    }
-}
-
-// --- UART RX Interrupt (called when RX byte arrives) ---
-void __attribute__ ((interrupt, no_auto_psv)) _U1RXInterrupt(void)
-{
-    myIFS0->bits.U1RXIF = 0;
-    if(myU1STA->bits.OERR) {
-        myU1STA->bits.OERR = 0;
-    }
-    uart_rx_buf[uart_rx_idx++] = myU1RXREG->value;
-    if(uart_rx_idx >= UART_RX_BUF_SIZE) {
-        uart_rx_idx = 0; // wrap
-    }
-}
-
-// --- Parse Modbus request and reply ---
-void process_modbus_requests(void) 
-{
-    if(uart_rx_idx < 8)
-    {
-        return;
-    }
-
-    uint8_t *req = (uint8_t *)uart_rx_buf;
-    uint16_t start_addr = (req[2] << 8) | req[3];   // Start address (Modbus)
-    uint16_t length   = (req[4] << 8) | req[5];   // Quantity
-
-    // Address check: Allow 0 or 1 as start address (most pollers use 1)
-//    if ((start_addr != 0 && start_addr != 1)) return;
-    if((start_addr != 1 && start_addr > HOLDING_REG_COUNT) || (start_addr != 1 && length >(HOLDING_REG_COUNT - start_addr)) )
-    {
-        return;
-    }
-    // Length check: up to HOLDING_REG_COUNT only
-//    if (length == 0 || length > HOLDING_REG_COUNT) return;
-
-    // CRC check (low byte first)
-    uint16_t req_crc = (req[7] << 8) | req[6];
-    if (modbus_crc16(req, 6) != req_crc) return;
-
-    // Build response dynamically: 3 header + (length*2) data + 2 CRC
-//    uint8_t resp[3 + HOLDING_REG_COUNT*2 + 2]; // Max buffer size
-    uart_tx_buf[0] = MODBUS_SLAVE_ADDR;
-    uart_tx_buf[1] = READ_HOLDING_REGISTER;
-    uart_tx_buf[2] = length * 2; // byte count (2 bytes per register)
-
-    uint16_t idx = 3;
-    for (uint16_t i = (start_addr); i < (length + start_addr); i++) {
-        uart_tx_buf[idx++] = (holding_regs[i] >> 8) & 0xFF;
-        uart_tx_buf[idx++] = holding_regs[i] & 0xFF;
-    }
-
-    uint16_t resp_crc = modbus_crc16(uart_tx_buf, idx);
-    uart_tx_buf[idx++] = resp_crc & 0xFF;          // CRC low
-    uart_tx_buf[idx++] = (resp_crc >> 8) & 0xFF;   // CRC high
-    
-    // --- TX Interrupt-based Send (non-blocking) ---
-    if(!uart_tx_busy) 
-    {
-        uart_tx_count = 1;
-        uart_tx_len = idx;
-        uart_tx_busy = 1;
-        myU1TXREG->value = uart_tx_buf[0]; // Send first byte -- Kick start
-        myIEC0->bits.U1TXIE = 1;           // TX interrupt enable
-    }
-
-    uart_rx_idx = 0; // Reset buffer
-}
-
-// --- Main ---
 int main(void)
 {
-    UART1_init();
-    delay(100);
+    modbus_uart_init(); // UART HW setup
+    modbus_init(modbus_rx_buf, UART_RX_BUF_SIZE,
+                modbus_tx_buf, UART_TX_BUF_SIZE,
+                holding_regs, HOLDING_REG_COUNT);
 
     while(1) {
-        process_modbus_requests();
+        modbus_task(); // driver handles incoming/outgoing frames
     }
 }
 

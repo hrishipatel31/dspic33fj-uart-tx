@@ -51,17 +51,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=main.c
+SOURCEFILES_QUOTED_IF_SPACED=modbus.c modbus_port.c main.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/modbus.o ${OBJECTDIR}/modbus_port.o ${OBJECTDIR}/main.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/modbus.o.d ${OBJECTDIR}/modbus_port.o.d ${OBJECTDIR}/main.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/main.o
+OBJECTFILES=${OBJECTDIR}/modbus.o ${OBJECTDIR}/modbus_port.o ${OBJECTDIR}/main.o
 
 # Source Files
-SOURCEFILES=main.c
+SOURCEFILES=modbus.c modbus_port.c main.c
 
 
 
@@ -89,6 +89,18 @@ MP_LINKER_FILE_OPTION=,--script=p33FJ256GP710A.gld
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: compile
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
+${OBJECTDIR}/modbus.o: modbus.c  .generated_files/flags/default/1f141b1264e7673526a8bbe2480d2730f5fd879e .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/modbus.o.d 
+	@${RM} ${OBJECTDIR}/modbus.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  modbus.c  -o ${OBJECTDIR}/modbus.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/modbus.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK4=1    -omf=elf -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/modbus_port.o: modbus_port.c  .generated_files/flags/default/d77b67e151bbec52e47d9d38756e409dc7e9eb5e .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/modbus_port.o.d 
+	@${RM} ${OBJECTDIR}/modbus_port.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  modbus_port.c  -o ${OBJECTDIR}/modbus_port.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/modbus_port.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK4=1    -omf=elf -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
 ${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/86b5fc25996b6acddbe021c7a68f118b284fea04 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/main.o.d 
@@ -96,6 +108,18 @@ ${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/86b5fc25996b6acddbe0
 	${MP_CC} $(MP_EXTRA_CC_PRE)  main.c  -o ${OBJECTDIR}/main.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/main.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK4=1    -omf=elf -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
 else
+${OBJECTDIR}/modbus.o: modbus.c  .generated_files/flags/default/e5833c82acbbb9a82fe150865cece4ea18b81981 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/modbus.o.d 
+	@${RM} ${OBJECTDIR}/modbus.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  modbus.c  -o ${OBJECTDIR}/modbus.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/modbus.o.d"        -g -omf=elf -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/modbus_port.o: modbus_port.c  .generated_files/flags/default/5a8833b0d7cd3cf60afd45cb408d477eab9e2f5b .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/modbus_port.o.d 
+	@${RM} ${OBJECTDIR}/modbus_port.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  modbus_port.c  -o ${OBJECTDIR}/modbus_port.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/modbus_port.o.d"        -g -omf=elf -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
 ${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/b9f2ae69e281c9f87470e3e41de10c1546056c0b .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/main.o.d 

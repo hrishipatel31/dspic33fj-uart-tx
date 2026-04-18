@@ -1,3 +1,5 @@
-build/default/production/main.o: main.c my_defines.h
+build/default/production/main.o: main.c modbus.h modbus_port.h
 
-my_defines.h:
+modbus.h:
+
+modbus_port.h:
