@@ -1,5 +1,6 @@
 #include "modbus.h"
 #include "modbus_port.h"
+#include "modbus_data.h"
 
 static uint8_t *rx_buf;
 static uint16_t rx_size;
@@ -10,9 +11,6 @@ static uint16_t tx_size;
 static volatile uint16_t tx_idx;
 static volatile uint16_t tx_len;
 static volatile uint8_t tx_busy;
-
-static uint16_t *holding_regs;
-static uint16_t reg_count;
 
 static uint16_t modbus_crc16(uint8_t *data, uint16_t length)
 {
@@ -30,8 +28,7 @@ static uint16_t modbus_crc16(uint8_t *data, uint16_t length)
 }
 
 void modbus_init(uint8_t *rx_b, uint16_t rx_s,
-                 uint8_t *tx_b, uint16_t tx_s,
-                 uint16_t *regs, uint16_t reg_c)
+                 uint8_t *tx_b, uint16_t tx_s)
 {
     rx_buf = rx_b;
     rx_size = rx_s;
@@ -41,8 +38,6 @@ void modbus_init(uint8_t *rx_b, uint16_t rx_s,
     tx_idx = 0;
     tx_len = 0;
     tx_busy = 0;
-    holding_regs = regs;
-    reg_count = reg_c;
 }
 
 void modbus_rx_isr(uint8_t byte)
@@ -59,9 +54,12 @@ void modbus_rx_isr(uint8_t byte)
 
 void modbus_tx_isr(void)
 {
-    if (tx_idx < tx_len) {
+    if (tx_idx < tx_len) 
+    {
         modbus_uart_send(tx_buf[tx_idx++]);
-    } else {
+    } 
+    else 
+    {
         modbus_uart_disable_txint();
         tx_busy = 0;
         tx_idx = 0;
@@ -100,8 +98,8 @@ void modbus_task(void)
     tx_buf[2] = length * 2;
     uint16_t i = 0, idx = 3;
     for(i = start_addr; i < (start_addr + length); i++) {
-        tx_buf[idx++] = (holding_regs[i] >> 8) & 0xFF;
-        tx_buf[idx++] = holding_regs[i] & 0xFF;
+        tx_buf[idx++] = (modbus_get_holding_register(i) >> 8) & 0xFF;
+        tx_buf[idx++] = modbus_get_holding_register(i) & 0xFF;
     }
     uint16_t crc = modbus_crc16(tx_buf, idx);
     tx_buf[idx++] = crc & 0xFF;

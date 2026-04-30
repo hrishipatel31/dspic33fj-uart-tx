@@ -15,8 +15,7 @@
 #define HOLDING_REG_COUNT   64
 
 void modbus_init(uint8_t *rx_buf, uint16_t rx_size,
-                 uint8_t *tx_buf, uint16_t tx_size,
-                 uint16_t *holding_regs, uint16_t reg_count);
+                 uint8_t *tx_buf, uint16_t tx_size);
 
 void modbus_task(void);
 

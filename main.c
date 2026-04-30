@@ -56,17 +56,10 @@
 #include <stdint.h>
 #include "modbus.h"
 #include "modbus_port.h"
+#include "modbus_data.h"
 
 #define UART_RX_BUF_SIZE    64
 #define UART_TX_BUF_SIZE    (3 + HOLDING_REG_COUNT*2 + 2)
-
-// --- User application holding registers ---
-uint16_t holding_regs[HOLDING_REG_COUNT] = {
-    0x1111, 0x2222, 0x3333, 0x4444, 0x5555, 0x6666, 0x7777, 0x8888, 0x9999, 0xAAAA, 0xABCD, 0xBBBB, 0xCCCC, 0xDDDD, 0xEEEE, 0xFFFF, 
-    0x1111, 0x2222, 0x3333, 0x4444, 0x5555, 0x6666, 0x7777, 0x8888, 0x9999, 0xAAAA, 0xABCD, 0xBBBB, 0xCCCC, 0xDDDD, 0xEEEE, 0xFFFF, 
-    0x1111, 0x2222, 0x3333, 0x4444, 0x5555, 0x6666, 0x7777, 0x8888, 0x9999, 0xAAAA, 0xABCD, 0xBBBB, 0xCCCC, 0xDDDD, 0xEEEE, 0xFFFF, 
-    0x1111, 0x2222, 0x3333, 0x4444, 0x5555, 0x6666, 0x7777, 0x8888, 0x9999, 0xAAAA, 0xABCD, 0xBBBB, 0xCCCC, 0xDDDD, 0xEEEE, 0xFFFF
-};
 
 // --- Modbus RX/TX Buffers ---
 uint8_t modbus_rx_buf[UART_RX_BUF_SIZE];
@@ -76,8 +69,7 @@ int main(void)
 {
     modbus_uart_init(); // UART HW setup
     modbus_init(modbus_rx_buf, UART_RX_BUF_SIZE,
-                modbus_tx_buf, UART_TX_BUF_SIZE,
-                holding_regs, HOLDING_REG_COUNT);
+                modbus_tx_buf, UART_TX_BUF_SIZE);
 
     while(1) {
         modbus_task(); // driver handles incoming/outgoing frames
