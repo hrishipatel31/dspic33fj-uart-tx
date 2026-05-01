@@ -15,6 +15,82 @@
 #define IEC0_ADDR     0x0094
 #define IFS0_ADDR     0x0084
 
+#define TRISD_ADDR    0x02D2
+#define PORTD_ADDR    0x02D4
+#define LATD_ADDR     0x02D6
+
+typedef union
+{
+    struct
+    {
+        uint16_t TRISD0  : 1;
+        uint16_t TRISD1  : 1;
+        uint16_t TRISD2  : 1;
+        uint16_t TRISD3  : 1;
+        uint16_t TRISD4  : 1;
+        uint16_t TRISD5  : 1;
+        uint16_t TRISD6  : 1;
+        uint16_t TRISD7  : 1;
+        uint16_t TRISD8  : 1;
+        uint16_t TRISD9  : 1;
+        uint16_t TRISD10 : 1;
+        uint16_t TRISD11 : 1;
+        uint16_t TRISD12 : 1;
+        uint16_t TRISD13 : 1;
+        uint16_t TRISD14 : 1;
+        uint16_t TRISD15 : 1;
+    }bits;
+    uint16_t value;
+}mTRISD;
+
+typedef union
+{
+    struct
+    {
+        uint16_t RD0  : 1;
+        uint16_t RD1  : 1;
+        uint16_t RD2  : 1;
+        uint16_t RD3  : 1;
+        uint16_t RD4  : 1;
+        uint16_t RD5  : 1;
+        uint16_t RD6  : 1;
+        uint16_t RD7  : 1;
+        uint16_t RD8  : 1;
+        uint16_t RD9  : 1;
+        uint16_t RD10 : 1;
+        uint16_t RD11 : 1;
+        uint16_t RD12 : 1;
+        uint16_t RD13 : 1;
+        uint16_t RD14 : 1;
+        uint16_t RD15 : 1;
+    }bits;
+    uint16_t value;
+}mPORTD;
+
+typedef union
+{
+    struct
+    {
+        uint16_t LATD0  : 1;
+        uint16_t LATD1  : 1;
+        uint16_t LATD2  : 1;
+        uint16_t LATD3  : 1;
+        uint16_t LATD4  : 1;
+        uint16_t LATD5  : 1;
+        uint16_t LATD6  : 1;
+        uint16_t LATD7  : 1;
+        uint16_t LATD8  : 1;
+        uint16_t LATD9  : 1;
+        uint16_t LATD10 : 1;
+        uint16_t LATD11 : 1;
+        uint16_t LATD12 : 1;
+        uint16_t LATD13 : 1;
+        uint16_t LATD14 : 1;
+        uint16_t LATD15 : 1;
+    }bits;
+    uint16_t value;
+}mLATD;
+
 typedef union
 {
     struct
@@ -126,10 +202,14 @@ typedef union
     uint16_t value;
 }mIFS0;
 
-volatile mU1MODE * const myU1MODE = (volatile mU1MODE *) U1MODE_ADDR;
-volatile mU1STA * const myU1STA = (volatile mU1STA *) U1STA_ADDR;
-volatile mU1BRG * const myU1BRG = (volatile mU1BRG *) U1BRG_ADDR;
-volatile mU1TXREG * const myU1TXREG = (volatile mU1TXREG *) U1TXREG_ADDR;
-volatile mU1RXREG * const myU1RXREG = (volatile mU1RXREG *) U1RXREG_ADDR;
-volatile mIEC0 * const myIEC0 = (volatile mIEC0 *) IEC0_ADDR;
-volatile mIFS0 * const myIFS0 = (volatile mIFS0 *) IFS0_ADDR;
+extern volatile mTRISD * const myTRISD;
+extern volatile mPORTD * const myPORTD;
+extern volatile mLATD * const myLATD;
+
+extern volatile mU1MODE * const myU1MODE;
+extern volatile mU1STA * const myU1STA;
+extern volatile mU1BRG * const myU1BRG;
+extern volatile mU1TXREG * const myU1TXREG;
+extern volatile mU1RXREG * const myU1RXREG;
+extern volatile mIEC0 * const myIEC0;
+extern volatile mIFS0 * const myIFS0;

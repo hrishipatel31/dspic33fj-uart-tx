@@ -51,17 +51,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=modbus.c modbus_port.c modbus_data.c main.c
+SOURCEFILES_QUOTED_IF_SPACED=modbus.c modbus_port.c modbus_data.c main.c my_defines.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/modbus.o ${OBJECTDIR}/modbus_port.o ${OBJECTDIR}/modbus_data.o ${OBJECTDIR}/main.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/modbus.o.d ${OBJECTDIR}/modbus_port.o.d ${OBJECTDIR}/modbus_data.o.d ${OBJECTDIR}/main.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/modbus.o ${OBJECTDIR}/modbus_port.o ${OBJECTDIR}/modbus_data.o ${OBJECTDIR}/main.o ${OBJECTDIR}/my_defines.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/modbus.o.d ${OBJECTDIR}/modbus_port.o.d ${OBJECTDIR}/modbus_data.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/my_defines.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/modbus.o ${OBJECTDIR}/modbus_port.o ${OBJECTDIR}/modbus_data.o ${OBJECTDIR}/main.o
+OBJECTFILES=${OBJECTDIR}/modbus.o ${OBJECTDIR}/modbus_port.o ${OBJECTDIR}/modbus_data.o ${OBJECTDIR}/main.o ${OBJECTDIR}/my_defines.o
 
 # Source Files
-SOURCEFILES=modbus.c modbus_port.c modbus_data.c main.c
+SOURCEFILES=modbus.c modbus_port.c modbus_data.c main.c my_defines.c
 
 
 
@@ -113,6 +113,12 @@ ${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/86b5fc25996b6acddbe0
 	@${RM} ${OBJECTDIR}/main.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  main.c  -o ${OBJECTDIR}/main.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/main.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK4=1    -omf=elf -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
+${OBJECTDIR}/my_defines.o: my_defines.c  .generated_files/flags/default/9aea39df3b20be7c75cbf5201d4dc46225fb4c86 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/my_defines.o.d 
+	@${RM} ${OBJECTDIR}/my_defines.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  my_defines.c  -o ${OBJECTDIR}/my_defines.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/my_defines.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK4=1    -omf=elf -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
 else
 ${OBJECTDIR}/modbus.o: modbus.c  .generated_files/flags/default/e5833c82acbbb9a82fe150865cece4ea18b81981 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
@@ -137,6 +143,12 @@ ${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/b9f2ae69e281c9f87470
 	@${RM} ${OBJECTDIR}/main.o.d 
 	@${RM} ${OBJECTDIR}/main.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  main.c  -o ${OBJECTDIR}/main.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/main.o.d"        -g -omf=elf -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/my_defines.o: my_defines.c  .generated_files/flags/default/e90425c167afc0372d9b73de72340576d2a45245 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/my_defines.o.d 
+	@${RM} ${OBJECTDIR}/my_defines.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  my_defines.c  -o ${OBJECTDIR}/my_defines.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/my_defines.o.d"        -g -omf=elf -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -O0 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
 endif
 

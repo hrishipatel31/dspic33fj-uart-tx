@@ -11,7 +11,6 @@
 #include <stdint.h>
 #include "modbus.h"
 
-//extern uint16_t holding_regs[];
 // Returns value for requested holding register address (1-based index)
 uint16_t modbus_get_holding_register(uint16_t reg_addr);
 

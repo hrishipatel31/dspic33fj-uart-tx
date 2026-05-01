@@ -27,6 +27,7 @@
         <itemPath>modbus_data.h</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>
+      <itemPath>my_defines.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>

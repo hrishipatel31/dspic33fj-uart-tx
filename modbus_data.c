@@ -6,6 +6,9 @@
  */
 
 #include "modbus_data.h"
+#include "my_defines.h"
+
+//RD7, RD6, RD13 represents SW2, SW3, SW4 respectively on MCP3903 board
 
 // --- User application holding registers ---
 static uint16_t holding_regs[HOLDING_REG_COUNT] = {
@@ -17,10 +20,26 @@ static uint16_t holding_regs[HOLDING_REG_COUNT] = {
 
 uint16_t modbus_get_holding_register(uint16_t reg_addr)
 {
-    switch (reg_addr) {
-        case 0:  return holding_regs[0];
-        case 1:  return holding_regs[1];
-        case 2:  return holding_regs[2];
+    switch(reg_addr) {
+        case 0:
+            //RD7 is SW2 on MCP3903 board 
+            if (myPORTD->bits.RD7)
+                return 0x0000;
+            else
+                return 0xFFFF;
+
+        case 1:
+            //RD6 is SW3 on MCP3903 board 
+            if (myPORTD->bits.RD6)
+                return 0x0000;
+            else
+                return 0xFFFF;
+        case 2:
+            //RD13 is SW4 on MCP3903 board 
+            if (myPORTD->bits.RD13)
+                return 0x0000;
+            else
+                return 0xFFFF;
         case 3:  return holding_regs[3];
         case 4:  return holding_regs[4];
         case 5:  return holding_regs[5];
