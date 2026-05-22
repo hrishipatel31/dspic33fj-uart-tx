@@ -2,6 +2,8 @@
 #include "modbus_port.h"
 #include "modbus_data.h"
 
+#define WRITE_SINGLE_REGISTER 06
+
 static uint8_t *rx_buf;
 static uint16_t rx_size;
 static volatile uint8_t rx_idx;
@@ -69,51 +71,89 @@ void modbus_tx_isr(void)
 
 void modbus_task(void)
 {
-    // Minimum Modbus RTU frame: 8 bytes for function 0x03
-    if(rx_idx < 8)
-        return;
+    if(rx_idx < 8) return;
 
     uint8_t *req = rx_buf;
     uint16_t slave_addr = req[0];
     uint8_t func_code = req[1];
-    uint16_t start_addr = (req[2] << 8) | req[3];
-    uint16_t length = (req[4] << 8) | req[5];
-    uint16_t req_crc = (req[7] << 8) | req[6];
 
-    // Check slave address & function code
-    if(slave_addr != MODBUS_SLAVE_ADDR || func_code != READ_HOLDING_REGISTER)
-        goto clear_rx;
+    // Handle function codes
+    switch (func_code) 
+    {
+        case READ_HOLDING_REGISTER: 
+        {
+            // --- Standard Read as before ---
+            uint16_t start_addr = (req[2] << 8) | req[3];
+            uint16_t length = (req[4] << 8) | req[5];
+            uint16_t req_crc = (req[7] << 8) | req[6];
 
-    // Address/length validity
-    if((start_addr != 1 && start_addr > HOLDING_REG_COUNT) || (start_addr != 1 && length >(HOLDING_REG_COUNT - start_addr)) )
-        goto clear_rx;
+            if(slave_addr != MODBUS_SLAVE_ADDR || func_code != READ_HOLDING_REGISTER)
+                break;
 
-    // CRC
-    if(modbus_crc16(req, 6) != req_crc)
-        goto clear_rx;
+            // Address/length validity
+            if((start_addr != 1 && start_addr > HOLDING_REG_COUNT) || (start_addr != 1 && length >(HOLDING_REG_COUNT - start_addr)) )
+                break;
 
-    // Build Modbus reply frame
-    tx_buf[0] = MODBUS_SLAVE_ADDR;
-    tx_buf[1] = READ_HOLDING_REGISTER;
-    tx_buf[2] = length * 2;
-    uint16_t i = 0, idx = 3;
-    for(i = start_addr; i < (start_addr + length); i++) {
-        tx_buf[idx++] = (modbus_get_holding_register(i) >> 8) & 0xFF;
-        tx_buf[idx++] = modbus_get_holding_register(i) & 0xFF;
+            // CRC
+            if(modbus_crc16(req, 6) != req_crc)
+                break;
+            tx_buf[0] = MODBUS_SLAVE_ADDR;
+            tx_buf[1] = READ_HOLDING_REGISTER;
+            tx_buf[2] = length * 2;
+            uint16_t idx = 3;
+            for(uint16_t i = start_addr; i < (start_addr + length); i++) {
+                uint16_t reg_val = modbus_get_holding_register(i);
+                tx_buf[idx++] = (reg_val >> 8) & 0xFF;
+                tx_buf[idx++] = reg_val & 0xFF;
+            }
+            uint16_t crc = modbus_crc16(tx_buf, idx);
+            tx_buf[idx++] = crc & 0xFF;
+            tx_buf[idx++] = (crc >> 8) & 0xFF;
+
+            if(!tx_busy) {
+                tx_idx = 1;
+                tx_len = idx;
+                tx_busy = 1;
+                modbus_uart_send(tx_buf[0]);
+                modbus_uart_enable_txint();
+            }
+            break;
+        }
+
+        case WRITE_SINGLE_REGISTER: 
+        {
+            // --- Handle write to address 65 ---
+            // Modbus 0x06 frame: slave_addr, func_code, reg_hi, reg_lo, val_hi, val_lo, crc_lo, crc_hi
+            uint16_t reg_addr = (req[2] << 8) | req[3];
+            uint16_t reg_value = (req[4] << 8) | req[5];
+            uint16_t req_crc = (req[7] << 8) | req[6];
+
+            if(slave_addr != MODBUS_SLAVE_ADDR || modbus_crc16(req, 6) != req_crc)
+                break;
+
+            modbus_set_holding_register(reg_addr, reg_value); // Set via HAL
+
+            // Per Modbus spec, echo back original request as confirmation
+            for(uint16_t i = 0; i < 6; i++)
+                tx_buf[i] = req[i];
+            uint16_t crc = modbus_crc16(tx_buf, 6);
+            tx_buf[6] = crc & 0xFF;
+            tx_buf[7] = (crc >> 8) & 0xFF;
+
+            if(!tx_busy) {
+                tx_idx = 1;
+                tx_len = 8;
+                tx_busy = 1;
+                modbus_uart_send(tx_buf[0]);
+                modbus_uart_enable_txint();
+            }
+            break;
+        }
+
+        default:
+            // Unsupported function code—ignore request or implement exception reply
+            break;
     }
-    uint16_t crc = modbus_crc16(tx_buf, idx);
-    tx_buf[idx++] = crc & 0xFF;
-    tx_buf[idx++] = (crc >> 8) & 0xFF;
 
-    // Start TX (interrupt driven)
-    if(!tx_busy) {
-        tx_idx = 1;
-        tx_len = idx;
-        tx_busy = 1;
-        modbus_uart_send(tx_buf[0]); // first byte
-        modbus_uart_enable_txint();
-    }
-
-clear_rx:
-    rx_idx = 0; // ready for next request
+    rx_idx = 0;
 }

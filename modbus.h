@@ -10,9 +10,9 @@
 
 #include <stdint.h>
 
-#define MODBUS_SLAVE_ADDR 0x0A
-#define READ_HOLDING_REGISTER 0x03
-#define HOLDING_REG_COUNT   64
+#define MODBUS_SLAVE_ADDR 01
+#define READ_HOLDING_REGISTER 03
+#define HOLDING_REG_COUNT   65
 
 void modbus_init(uint8_t *rx_buf, uint16_t rx_size,
                  uint8_t *tx_buf, uint16_t tx_size);

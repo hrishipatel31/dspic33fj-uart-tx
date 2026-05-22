@@ -13,6 +13,7 @@
 
 // Returns value for requested holding register address (1-based index)
 uint16_t modbus_get_holding_register(uint16_t reg_addr);
+void modbus_set_holding_register(uint16_t reg_addr, uint16_t value);
 
 #endif	/* MODBUS_DATA_H */
 
