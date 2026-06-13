@@ -20,7 +20,9 @@ void modbus_init(uint8_t *rx_buf, uint16_t rx_size,
 void modbus_task(void);
 
 void modbus_rx_isr(uint8_t byte); // Called from UART RX ISR
+void modbus_rx_frame_isr(const uint8_t *frame, uint16_t length);
 void modbus_tx_isr(void);         // Called from UART TX ISR
+void modbus_tx_done_isr(void);    // Called when DMA TX completes
 
 
 #endif	/* MODBUS_H */

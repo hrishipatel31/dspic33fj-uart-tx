@@ -67,9 +67,9 @@ uint8_t modbus_tx_buf[UART_TX_BUF_SIZE];
 
 int main(void)
 {
-    modbus_uart_init(); // UART HW setup
     modbus_init(modbus_rx_buf, UART_RX_BUF_SIZE,
                 modbus_tx_buf, UART_TX_BUF_SIZE);
+    modbus_uart_init(); // UART HW setup
 
     while(1) {
         modbus_task(); // driver handles incoming/outgoing frames

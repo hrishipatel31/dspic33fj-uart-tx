@@ -18,9 +18,12 @@
 #define STD_SPEED 16
 #define HIGH_SPEED 4
 #define BRGV ((Fcy/BAUDRATE)/HIGH_SPEED)-1
+#define MODBUS_UART_RX_DMA 1
+#define MODBUS_UART_TX_DMA 1
 
 void modbus_uart_init(void);
 void modbus_uart_send(uint8_t byte);
+void modbus_uart_send_frame(const uint8_t *data, uint16_t length);
 void modbus_uart_enable_txint(void);
 void modbus_uart_disable_txint(void);
 

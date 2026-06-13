@@ -90,13 +90,13 @@ Default Scalar Model: Small
 
 section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
-.text                        0x200               0x12c           0x1c2  (450)
-.const                       0x32c                0x14            0x1e  (30)
-.text                        0x340               0x462           0x693  (1683)
-.dinit                       0x7a2                0x14            0x1e  (30)
-.text                        0x7b6                0x12            0x1b  (27)
+.text                        0x200               0x142           0x1e3  (483)
+.const                       0x342                0x2c            0x42  (66)
+.text                        0x36e               0x59a           0x867  (2151)
+.dinit                       0x908                0x20            0x30  (48)
+.text                        0x928                0x12            0x1b  (27)
 
-                 Total "program" memory used (bytes):          0x8ac  (2220) <1%
+                 Total "program" memory used (bytes):          0xad7  (2775) 1%
 
 
 "data" Memory  [Origin = 0x800, Length = 0x7800]
@@ -105,8 +105,10 @@ section                    address      alignment gaps    total length  (dec)
 -------                    -------      --------------    -------------------
 .nbss                        0x800                   0            0x10  (16)
 .bss                         0x810                   0           0x14a  (330)
+_0000000004AC3E606a2d9e46    0x7f60                   0            0x88  (136)
+_0000000004AC3DC06a2d9e46    0x7ff0                   0             0x8  (8)
 
-                 Total "data" memory used (bytes):          0x15a  (346) 1%
+                 Total "data" memory used (bytes):          0x1ea  (490) 1%
 
 
 Dynamic Memory Usage
@@ -114,9 +116,9 @@ Dynamic Memory Usage
 region                     address                      maximum length  (dec)
 ------                     -------                      ---------------------
 heap                             0                                   0  (0)
-stack                        0x95a                              0x76a6  (30374)
+stack                        0x95a                              0x7606  (30214)
 
-                 Maximum dynamic memory (bytes):         0x76a6  (30374)
+                 Maximum dynamic memory (bytes):         0x7606  (30214)
 
 Info: Project is using a large data memory model when small data memory model is sufficient.
 
@@ -137,67 +139,93 @@ External Symbols in Program Memory (by address):
                   0x00023c                  __psv_init
                   0x000252                  __data_init
                   0x000252                  __data_init_standard
-                  0x0002c8                  __U1RXInterrupt
-                  0x000302                  __U1TXInterrupt
-                  0x000326                  __DefaultInterrupt
-                  0x00032c                  _myPORTD
-                  0x00032e                  _myTRISD
-                  0x000330                  _myLATD
-                  0x000332                  _myU1MODE
-                  0x000334                  _myU1STA
-                  0x000336                  _myU1BRG
-                  0x000338                  _myU1TXREG
-                  0x00033a                  _myU1RXREG
-                  0x00033c                  _myIEC0
-                  0x00033e                  _myIFS0
-                  0x00039c                  _modbus_init
-                  0x0003c2                  _modbus_rx_isr
-                  0x0003e6                  _modbus_tx_isr
-                  0x00040e                  _modbus_task
-                  0x000610                  _modbus_get_holding_register
-                  0x0006a8                  _modbus_set_holding_register
-                  0x00071c                  _modbus_uart_init
-                  0x00076c                  _modbus_uart_send
-                  0x000786                  _modbus_uart_enable_txint
-                  0x000794                  _modbus_uart_disable_txint
-                  0x0007b6                  _main
+                  0x0002c8                  __DMA0Interrupt
+                  0x000302                  __DMA1Interrupt
+                  0x00033c                  __DefaultInterrupt
+                  0x000342                  _myPORTD
+                  0x000344                  _myTRISD
+                  0x000346                  _myLATD
+                  0x000348                  _myU1MODE
+                  0x00034a                  _myU1STA
+                  0x00034c                  _myU1BRG
+                  0x00034e                  _myU1TXREG
+                  0x000350                  _myU1RXREG
+                  0x000352                  _myIEC0
+                  0x000354                  _myIFS0
+                  0x000356                  _myDMA0CON
+                  0x000358                  _myDMA0REQ
+                  0x00035a                  _myDMA0STA
+                  0x00035c                  _myDMA0STB
+                  0x00035e                  _myDMA0PAD
+                  0x000360                  _myDMA0CNT
+                  0x000362                  _myDMA1CON
+                  0x000364                  _myDMA1REQ
+                  0x000366                  _myDMA1STA
+                  0x000368                  _myDMA1STB
+                  0x00036a                  _myDMA1PAD
+                  0x00036c                  _myDMA1CNT
+                  0x0003f0                  _modbus_init
+                  0x000416                  _modbus_rx_frame_isr
+                  0x00044e                  _modbus_tx_done_isr
+                  0x00045c                  _modbus_task
+                  0x0006f4                  _modbus_uart_init
+                  0x000750                  _modbus_uart_send
+                  0x00076a                  _modbus_uart_send_frame
+                  0x0007e0                  _modbus_uart_enable_txint
+                  0x0007ee                  _modbus_uart_disable_txint
+                  0x0007fc                  _modbus_get_holding_register
+                  0x000894                  _modbus_set_holding_register
+                  0x000928                  _main
                   0xf80000                  __FBS.sec
                   0xf80002                  __FSS.sec
                   0xf80004                  __FGS.sec
 
 External Symbols in Program Memory (by name):
 
-                  0x000326                  __DefaultInterrupt
+                  0x0002c8                  __DMA0Interrupt
+                  0x000302                  __DMA1Interrupt
+                  0x00033c                  __DefaultInterrupt
                   0xf80000                  __FBS.sec
                   0xf80004                  __FGS.sec
                   0xf80002                  __FSS.sec
-                  0x0002c8                  __U1RXInterrupt
-                  0x000302                  __U1TXInterrupt
                   0x000252                  __data_init
                   0x000252                  __data_init_standard
                   0x00023c                  __psv_init
                   0x000200                  __resetPRI
-                  0x0007b6                  _main
-                  0x000610                  _modbus_get_holding_register
-                  0x00039c                  _modbus_init
-                  0x0003c2                  _modbus_rx_isr
-                  0x0006a8                  _modbus_set_holding_register
-                  0x00040e                  _modbus_task
-                  0x0003e6                  _modbus_tx_isr
-                  0x000794                  _modbus_uart_disable_txint
-                  0x000786                  _modbus_uart_enable_txint
-                  0x00071c                  _modbus_uart_init
-                  0x00076c                  _modbus_uart_send
-                  0x00033c                  _myIEC0
-                  0x00033e                  _myIFS0
-                  0x000330                  _myLATD
-                  0x00032c                  _myPORTD
-                  0x00032e                  _myTRISD
-                  0x000336                  _myU1BRG
-                  0x000332                  _myU1MODE
-                  0x00033a                  _myU1RXREG
-                  0x000334                  _myU1STA
-                  0x000338                  _myU1TXREG
+                  0x000928                  _main
+                  0x0007fc                  _modbus_get_holding_register
+                  0x0003f0                  _modbus_init
+                  0x000416                  _modbus_rx_frame_isr
+                  0x000894                  _modbus_set_holding_register
+                  0x00045c                  _modbus_task
+                  0x00044e                  _modbus_tx_done_isr
+                  0x0007ee                  _modbus_uart_disable_txint
+                  0x0007e0                  _modbus_uart_enable_txint
+                  0x0006f4                  _modbus_uart_init
+                  0x000750                  _modbus_uart_send
+                  0x00076a                  _modbus_uart_send_frame
+                  0x000360                  _myDMA0CNT
+                  0x000356                  _myDMA0CON
+                  0x00035e                  _myDMA0PAD
+                  0x000358                  _myDMA0REQ
+                  0x00035a                  _myDMA0STA
+                  0x00035c                  _myDMA0STB
+                  0x00036c                  _myDMA1CNT
+                  0x000362                  _myDMA1CON
+                  0x00036a                  _myDMA1PAD
+                  0x000364                  _myDMA1REQ
+                  0x000366                  _myDMA1STA
+                  0x000368                  _myDMA1STB
+                  0x000352                  _myIEC0
+                  0x000354                  _myIFS0
+                  0x000346                  _myLATD
+                  0x000342                  _myPORTD
+                  0x000344                  _myTRISD
+                  0x00034c                  _myU1BRG
+                  0x000348                  _myU1MODE
+                  0x000350                  _myU1RXREG
+                  0x00034a                  _myU1STA
+                  0x00034e                  _myU1TXREG
 
 Memory Configuration
 
@@ -261,7 +289,7 @@ LOAD c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libfx-elf.a
                   0x000002          0x2 SHORT 0x0 ((ABSOLUTE (__reset) >> 0x10) & 0x7f)
                   0x000003          0x2 SHORT 0x0
 
-.text             0x000200        0x12c
+.text             0x000200        0x142
  *(.init)
  .init            0x000200         0x4c c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(crt0_standard.o)
                   0x000200                  __resetPRI
@@ -273,36 +301,36 @@ LOAD c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libfx-elf.a
  *(.user_init)
  *(.handle)
  *(.isr*)
- .isr.text        0x0002c8         0x5e build/default/production/modbus_port.o
-                  0x0002c8                  __U1RXInterrupt
-                  0x000302                  __U1TXInterrupt
- .isr             0x000326          0x4 default_isr
-                  0x000326                  __DefaultInterrupt
+ .isr.text        0x0002c8         0x74 build/default/production/modbus_port.o
+                  0x0002c8                  __DMA0Interrupt
+                  0x000302                  __DMA1Interrupt
+ .isr             0x00033c          0x4 default_isr
+                  0x00033c                  __DefaultInterrupt
  *(.libc)
  *(.libm)
  *(.libdsp)
  *(.lib*)
  .libpic30_crt_start_mode
-                  0x00032a          0x2 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(crt_start_mode_normal.Meo)
-                  0x00032a                  __crt_start_mode
-                  0x00032a                  __crt_start_mode_normal
+                  0x000340          0x2 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(crt_start_mode_normal.Meo)
+                  0x000340                  __crt_start_mode
+                  0x000340                  __crt_start_mode_normal
 
 usercode
  *(usercode)
 
 __FBS             0xf80000          0x2
  *(__FBS.sec*)
- __FBS.sec        0xf80000          0x2 /CW/_FBS‡Ê
+ __FBS.sec        0xf80000          0x2 /CW/_FBS–íÎ
                   0xf80000                  __FBS.sec
 
 __FSS             0xf80002          0x2
  *(__FSS.sec*)
- __FSS.sec        0xf80002          0x2 /CW/_FSS.Ê
+ __FSS.sec        0xf80002          0x2 /CW/_FSS
                   0xf80002                  __FSS.sec
 
 __FGS             0xf80004          0x2
  *(__FGS.sec*)
- __FGS.sec        0xf80004          0x2 /CW/_FGS–Ê
+ __FGS.sec        0xf80004          0x2 /CW/_FGSêRÎ
                   0xf80004                  __FGS.sec
 
 __FOSCSEL
@@ -335,44 +363,45 @@ __FUID3
 .comment
  *(.comment)
 
-.debug_info       0x000000       0x1f64
+.debug_info       0x000000       0x2e46
  *(.debug_info)
- .debug_info      0x000000        0x468 build/default/production/modbus.o
- .debug_info      0x000468        0x936 build/default/production/modbus_port.o
- .debug_info      0x000d9e        0x36a build/default/production/modbus_data.o
- .debug_info      0x001108        0x19d build/default/production/main.o
- .debug_info      0x0012a5        0xcbf build/default/production/my_defines.o
+ .debug_info      0x000000        0x4ce build/default/production/modbus.o
+ .debug_info      0x0004ce       0x109a build/default/production/modbus_port.o
+ .debug_info      0x001568        0x36c build/default/production/modbus_data.o
+ .debug_info      0x0018d4        0x19d build/default/production/main.o
+ .debug_info      0x001a71       0x13d5 build/default/production/my_defines.o
  *(.gnu.linkonce.wi.*)
 
-.debug_abbrev     0x000000        0x3ca
+.debug_abbrev     0x000000        0x4f0
  *(.debug_abbrev)
- .debug_abbrev    0x000000         0xb1 build/default/production/modbus.o
- .debug_abbrev    0x0000b1         0xfe build/default/production/modbus_port.o
- .debug_abbrev    0x0001af         0xff build/default/production/modbus_data.o
- .debug_abbrev    0x0002ae         0x77 build/default/production/main.o
- .debug_abbrev    0x000325         0xa5 build/default/production/my_defines.o
+ .debug_abbrev    0x000000         0xeb build/default/production/modbus.o
+ .debug_abbrev    0x0000eb        0x18c build/default/production/modbus_port.o
+ .debug_abbrev    0x000277         0xff build/default/production/modbus_data.o
+ .debug_abbrev    0x000376         0x77 build/default/production/main.o
+ .debug_abbrev    0x0003ed        0x103 build/default/production/my_defines.o
 
-.debug_line       0x000000        0x398
+.debug_line       0x000000        0x3c9
  *(.debug_line)
- .debug_line      0x000000         0xfc build/default/production/modbus.o
- .debug_line      0x0000fc         0xc1 build/default/production/modbus_port.o
- .debug_line      0x0001bd         0xcb build/default/production/modbus_data.o
- .debug_line      0x000288         0x87 build/default/production/main.o
- .debug_line      0x00030f         0x89 build/default/production/my_defines.o
+ .debug_line      0x000000         0xf8 build/default/production/modbus.o
+ .debug_line      0x0000f8         0xf6 build/default/production/modbus_port.o
+ .debug_line      0x0001ee         0xcb build/default/production/modbus_data.o
+ .debug_line      0x0002b9         0x87 build/default/production/main.o
+ .debug_line      0x000340         0x89 build/default/production/my_defines.o
 
-.debug_frame      0x000000        0x204
+.debug_frame      0x000000        0x26c
  *(.debug_frame)
- .debug_frame     0x000000         0x96 build/default/production/modbus.o
- .debug_frame     0x000096         0xf8 build/default/production/modbus_port.o
- .debug_frame     0x00018e         0x48 build/default/production/modbus_data.o
- .debug_frame     0x0001d6         0x2e build/default/production/main.o
+ .debug_frame     0x000000         0xb0 build/default/production/modbus.o
+ .debug_frame     0x0000b0        0x146 build/default/production/modbus_port.o
+ .debug_frame     0x0001f6         0x48 build/default/production/modbus_data.o
+ .debug_frame     0x00023e         0x2e build/default/production/main.o
 
-.debug_str        0x000000         0x79
+.debug_str        0x000000         0xfd
  *(.debug_str)
- .debug_str       0x000000         0x36 build/default/production/modbus_port.o
- .debug_str       0x000036          0x9 build/default/production/modbus_data.o
- .debug_str       0x00003f         0x1c build/default/production/main.o
- .debug_str       0x00005b         0x1e build/default/production/my_defines.o
+ .debug_str       0x000000          0x7 build/default/production/modbus.o
+ .debug_str       0x000007         0xa9 build/default/production/modbus_port.o
+ .debug_str       0x0000b0          0x9 build/default/production/modbus_data.o
+ .debug_str       0x0000b9         0x1c build/default/production/main.o
+ .debug_str       0x0000d5         0x28 build/default/production/my_defines.o
 
 .debug_loc
  *(.debug_loc)
@@ -381,18 +410,18 @@ __FUID3
  *(.debug_macinfo)
 
 .debug_pubnames
-                  0x000000        0x210
+                  0x000000        0x2de
  *(.debug_pubnames)
  .debug_pubnames
-                  0x000000         0x56 build/default/production/modbus.o
+                  0x000000         0x61 build/default/production/modbus.o
  .debug_pubnames
-                  0x000056         0x9d build/default/production/modbus_port.o
+                  0x000061         0xb8 build/default/production/modbus_port.o
  .debug_pubnames
-                  0x0000f3         0x52 build/default/production/modbus_data.o
+                  0x000119         0x52 build/default/production/modbus_data.o
  .debug_pubnames
-                  0x000145         0x3f build/default/production/main.o
+                  0x00016b         0x3f build/default/production/main.o
  .debug_pubnames
-                  0x000184         0x8c build/default/production/my_defines.o
+                  0x0001aa        0x134 build/default/production/my_defines.o
 
 .debug_ranges
  *(.debug_ranges)
@@ -1640,41 +1669,51 @@ LOAD c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libm-elf.a
 LOAD c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-elf.a
 END GROUP
 OUTPUT(dist/default/production/dspic33FJ_test.X.production.elf elf32-pic30)
-LOAD /CW/_FGS–Ê
-LOAD /CW/_FSS.Ê
-LOAD /CW/_FBS‡Ê
+LOAD /CW/_FGSêRÎ
+LOAD /CW/_FSS
+LOAD /CW/_FBS–íÎ
 LOAD default_isr
 LOAD data_init
 
 .debug_pubtypes
-                  0x000060        0x189
+                  0x000060        0x2a7
  .debug_pubtypes
                   0x000060         0x2b build/default/production/modbus.o
  .debug_pubtypes
-                  0x00008b         0x7b build/default/production/modbus_port.o
+                  0x00008b         0xfd build/default/production/modbus_port.o
  .debug_pubtypes
-                  0x000106         0x2a build/default/production/modbus_data.o
+                  0x000188         0x2a build/default/production/modbus_data.o
  .debug_pubtypes
-                  0x000130         0x1e build/default/production/main.o
+                  0x0001b2         0x1e build/default/production/main.o
  .debug_pubtypes
-                  0x00014e         0x9b build/default/production/my_defines.o
+                  0x0001d0        0x137 build/default/production/my_defines.o
 
 __c30_signature
-                  0x0001e9         0x2a
+                  0x000307         0x2a
  __c30_signature
-                  0x0001e9          0x6 build/default/production/modbus.o
+                  0x000307          0x6 build/default/production/modbus.o
  __c30_signature
-                  0x0001ef          0x6 build/default/production/modbus_port.o
+                  0x00030d          0x6 build/default/production/modbus_port.o
  __c30_signature
-                  0x0001f5          0x6 build/default/production/modbus_data.o
+                  0x000313          0x6 build/default/production/modbus_data.o
  __c30_signature
-                  0x0001fb          0x6 build/default/production/main.o
+                  0x000319          0x6 build/default/production/main.o
  __c30_signature
-                  0x000201          0x6 build/default/production/my_defines.o
+                  0x00031f          0x6 build/default/production/my_defines.o
  __c30_signature
-                  0x000207          0x6 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(crt0_standard.o)
+                  0x000325          0x6 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(crt0_standard.o)
  __c30_signature
-                  0x00020d          0x6 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(data_init_standard.o)
+                  0x00032b          0x6 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(data_init_standard.o)
+
+_0000000004AC3E606a2d9e46
+                    0x7f60         0x88
+ _0000000004AC3E606a2d9e46
+                    0x7f60         0x88 build/default/production/modbus_port.o
+
+_0000000004AC3DC06a2d9e46
+                    0x7ff0          0x8
+ _0000000004AC3DC06a2d9e46
+                    0x7ff0          0x8 build/default/production/modbus_port.o
 
 .nbss               0x0800         0x10
  .nbss              0x0800         0x10 build/default/production/modbus.o
@@ -1685,15 +1724,15 @@ __c30_signature
                     0x0850                  _modbus_tx_buf
  .bss               0x08d8         0x82 build/default/production/modbus_data.o
 
-.ivt._U1RXInterrupt
-                  0x00002a          0x2
- .ivt._U1RXInterrupt
-                  0x00002a          0x2 build/default/production/modbus_port.o
+.ivt._DMA0Interrupt
+                  0x00001c          0x2
+ .ivt._DMA0Interrupt
+                  0x00001c          0x2 build/default/production/modbus_port.o
 
-.ivt._U1TXInterrupt
-                  0x00002c          0x2
- .ivt._U1TXInterrupt
-                  0x00002c          0x2 build/default/production/modbus_port.o
+.ivt._DMA1Interrupt
+                  0x000030          0x2
+ .ivt._DMA1Interrupt
+                  0x000030          0x2 build/default/production/modbus_port.o
 
 .config_JTAGEN    0xf8000e          0x2
  .config_JTAGEN
@@ -1712,37 +1751,50 @@ __c30_signature
 .config_IESO      0xf80006          0x2
  .config_IESO     0xf80006          0x2 build/default/production/main.o
 
-.const              0x832c         0x14 load address 0x00032c  
- .const             0x832c         0x14 build/default/production/my_defines.o
-                    0x832c                  _myPORTD
-                    0x832e                  _myTRISD
-                    0x8330                  _myLATD
-                    0x8332                  _myU1MODE
-                    0x8334                  _myU1STA
-                    0x8336                  _myU1BRG
-                    0x8338                  _myU1TXREG
-                    0x833a                  _myU1RXREG
-                    0x833c                  _myIEC0
-                    0x833e                  _myIFS0
+.const              0x8342         0x2c load address 0x000342  
+ .const             0x8342         0x2c build/default/production/my_defines.o
+                    0x8342                  _myPORTD
+                    0x8344                  _myTRISD
+                    0x8346                  _myLATD
+                    0x8348                  _myU1MODE
+                    0x834a                  _myU1STA
+                    0x834c                  _myU1BRG
+                    0x834e                  _myU1TXREG
+                    0x8350                  _myU1RXREG
+                    0x8352                  _myIEC0
+                    0x8354                  _myIFS0
+                    0x8356                  _myDMA0CON
+                    0x8358                  _myDMA0REQ
+                    0x835a                  _myDMA0STA
+                    0x835c                  _myDMA0STB
+                    0x835e                  _myDMA0PAD
+                    0x8360                  _myDMA0CNT
+                    0x8362                  _myDMA1CON
+                    0x8364                  _myDMA1REQ
+                    0x8366                  _myDMA1STA
+                    0x8368                  _myDMA1STB
+                    0x836a                  _myDMA1PAD
+                    0x836c                  _myDMA1CNT
 
-.text             0x000340        0x462
- .text            0x000340        0x2d0 build/default/production/modbus.o
-                  0x00039c                  _modbus_init
-                  0x0003c2                  _modbus_rx_isr
-                  0x0003e6                  _modbus_tx_isr
-                  0x00040e                  _modbus_task
- .text            0x000610        0x10c build/default/production/modbus_data.o
-                  0x000610                  _modbus_get_holding_register
-                  0x0006a8                  _modbus_set_holding_register
- .text            0x00071c         0x86 build/default/production/modbus_port.o
-                  0x00071c                  _modbus_uart_init
-                  0x00076c                  _modbus_uart_send
-                  0x000786                  _modbus_uart_enable_txint
-                  0x000794                  _modbus_uart_disable_txint
+.text             0x00036e        0x59a
+ .text            0x00036e        0x2bc build/default/production/modbus.o
+                  0x0003f0                  _modbus_init
+                  0x000416                  _modbus_rx_frame_isr
+                  0x00044e                  _modbus_tx_done_isr
+                  0x00045c                  _modbus_task
+ .text            0x00062a        0x1d2 build/default/production/modbus_port.o
+                  0x0006f4                  _modbus_uart_init
+                  0x000750                  _modbus_uart_send
+                  0x00076a                  _modbus_uart_send_frame
+                  0x0007e0                  _modbus_uart_enable_txint
+                  0x0007ee                  _modbus_uart_disable_txint
+ .text            0x0007fc        0x10c build/default/production/modbus_data.o
+                  0x0007fc                  _modbus_get_holding_register
+                  0x000894                  _modbus_set_holding_register
 
-.dinit            0x0007a2         0x14
- .dinit           0x0007a2         0x14 data_init
+.dinit            0x000908         0x20
+ .dinit           0x000908         0x20 data_init
 
-.text             0x0007b6         0x12
- .text            0x0007b6         0x12 build/default/production/main.o
-                  0x0007b6                  _main
+.text             0x000928         0x12
+ .text            0x000928         0x12 build/default/production/main.o
+                  0x000928                  _main

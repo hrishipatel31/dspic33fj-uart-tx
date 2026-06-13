@@ -14,6 +14,21 @@ static volatile uint16_t tx_idx;
 static volatile uint16_t tx_len;
 static volatile uint8_t tx_busy;
 
+static void modbus_start_tx(uint16_t length)
+{
+    if(!tx_busy && length <= tx_size)
+    {
+#if MODBUS_UART_TX_DMA
+        tx_idx = 0;
+#else
+        tx_idx = 1;
+#endif
+        tx_len = length;
+        tx_busy = 1;
+        modbus_uart_send_frame(tx_buf, tx_len);
+    }
+}
+
 static uint16_t modbus_crc16(uint8_t *data, uint16_t length)
 {
     uint16_t crc = 0xFFFF;
@@ -42,6 +57,7 @@ void modbus_init(uint8_t *rx_b, uint16_t rx_s,
     tx_busy = 0;
 }
 
+#if !MODBUS_UART_RX_DMA
 void modbus_rx_isr(uint8_t byte)
 {
     if (rx_idx < rx_size) 
@@ -53,7 +69,24 @@ void modbus_rx_isr(uint8_t byte)
         rx_idx = 0; // wrap or discard old
     }
 }
+#endif
 
+void modbus_rx_frame_isr(const uint8_t *frame, uint16_t length)
+{
+    if (length > rx_size)
+    {
+        rx_idx = 0;
+        return;
+    }
+
+    for (uint16_t i = 0; i < length; i++)
+    {
+        rx_buf[i] = frame[i];
+    }
+    rx_idx = length;
+}
+
+#if !MODBUS_UART_TX_DMA
 void modbus_tx_isr(void)
 {
     if (tx_idx < tx_len) 
@@ -67,6 +100,15 @@ void modbus_tx_isr(void)
         tx_idx = 0;
         tx_len = 0;
     }
+}
+#endif
+
+void modbus_tx_done_isr(void)
+{
+    modbus_uart_disable_txint();
+    tx_busy = 0;
+    tx_idx = 0;
+    tx_len = 0;
 }
 
 void modbus_task(void)
@@ -110,13 +152,7 @@ void modbus_task(void)
             tx_buf[idx++] = crc & 0xFF;
             tx_buf[idx++] = (crc >> 8) & 0xFF;
 
-            if(!tx_busy) {
-                tx_idx = 1;
-                tx_len = idx;
-                tx_busy = 1;
-                modbus_uart_send(tx_buf[0]);
-                modbus_uart_enable_txint();
-            }
+            modbus_start_tx(idx);
             break;
         }
 
@@ -140,13 +176,7 @@ void modbus_task(void)
             tx_buf[6] = crc & 0xFF;
             tx_buf[7] = (crc >> 8) & 0xFF;
 
-            if(!tx_busy) {
-                tx_idx = 1;
-                tx_len = 8;
-                tx_busy = 1;
-                modbus_uart_send(tx_buf[0]);
-                modbus_uart_enable_txint();
-            }
+            modbus_start_tx(8);
             break;
         }
 

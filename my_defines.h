@@ -19,6 +19,21 @@
 #define PORTD_ADDR    0x02D4
 #define LATD_ADDR     0x02D6
 
+#define DMA0CON_ADDR  0x0380
+#define DMA0REQ_ADDR  0x0382
+#define DMA0STA_ADDR  0x0384
+#define DMA0STB_ADDR  0x0386
+#define DMA0PAD_ADDR  0x0388
+#define DMA0CNT_ADDR  0x038A
+
+#define DMA1CON_ADDR  0x038C
+#define DMA1REQ_ADDR  0x038E
+#define DMA1STA_ADDR  0x0390
+#define DMA1STB_ADDR  0x0392
+#define DMA1PAD_ADDR  0x0394
+#define DMA1CNT_ADDR  0x0396
+
+
 typedef union
 {
     struct
@@ -202,6 +217,124 @@ typedef union
     uint16_t value;
 }mIFS0;
 
+typedef union {
+    struct 
+    {
+        uint16_t MODE       : 2;
+        uint16_t RESERVED1  : 2;
+        uint16_t AMODE      : 2;
+        uint16_t RESERVED2  : 5;
+        uint16_t NULLW      : 1;
+        uint16_t HALF       : 1;
+        uint16_t DIR        : 1;
+        uint16_t SIZE       : 1;
+        uint16_t CHEN       : 1;    
+    }bits;
+    uint16_t value;  
+}mDMA0CON;
+
+typedef union {
+    struct 
+    {
+        uint16_t IRQSEL     : 7;
+        uint16_t RESERVED1  : 8;
+        uint16_t FORCE      : 1;   
+    }bits;
+    uint16_t value;  
+}mDMA0REQ;
+
+typedef union {
+    struct 
+    {
+        uint16_t STA  : 16;
+    }bits;
+    uint16_t value;  
+}mDMA0STA;
+
+typedef union {
+    struct 
+    {
+        uint16_t STB  : 16;
+    }bits;
+    uint16_t value;  
+}mDMA0STB;
+
+typedef union {
+    struct 
+    {
+        uint16_t PAD  : 16;
+    }bits;
+    uint16_t value;  
+}mDMA0PAD;
+
+typedef union {
+    struct 
+    {
+        uint16_t CNT       : 10;
+        uint16_t RESERVED1 : 6;
+    }bits;
+    uint16_t value;  
+}mDMA0CNT;
+
+typedef union {
+    struct 
+    {
+        uint16_t MODE       : 2;
+        uint16_t RESERVED1  : 2;
+        uint16_t AMODE      : 2;
+        uint16_t RESERVED2  : 5;
+        uint16_t NULLW      : 1;
+        uint16_t HALF       : 1;
+        uint16_t DIR        : 1;
+        uint16_t SIZE       : 1;
+        uint16_t CHEN       : 1;    
+    }bits;
+    uint16_t value;  
+}mDMA1CON;
+
+typedef union {
+    struct 
+    {
+        uint16_t IRQSEL     : 7;
+        uint16_t RESERVED1  : 8;
+        uint16_t FORCE      : 1;   
+    }bits;
+    uint16_t value;  
+}mDMA1REQ;
+
+typedef union {
+    struct 
+    {
+        uint16_t STA  : 16;
+    }bits;
+    uint16_t value;  
+}mDMA1STA;
+
+typedef union {
+    struct 
+    {
+        uint16_t STB  : 16;
+    }bits;
+    uint16_t value;  
+}mDMA1STB;
+
+typedef union {
+    struct 
+    {
+        uint16_t PAD  : 16;
+    }bits;
+    uint16_t value;  
+}mDMA1PAD;
+
+typedef union {
+    struct 
+    {
+        uint16_t CNT       : 10;
+        uint16_t RESERVED1 : 6;
+    }bits;
+    uint16_t value;  
+}mDMA1CNT;
+
 extern volatile mTRISD * const myTRISD;
 extern volatile mPORTD * const myPORTD;
 extern volatile mLATD * const myLATD;
@@ -213,3 +346,17 @@ extern volatile mU1TXREG * const myU1TXREG;
 extern volatile mU1RXREG * const myU1RXREG;
 extern volatile mIEC0 * const myIEC0;
 extern volatile mIFS0 * const myIFS0;
+
+extern volatile mDMA0CON * const myDMA0CON;
+extern volatile mDMA0REQ * const myDMA0REQ;
+extern volatile mDMA0STA * const myDMA0STA;
+extern volatile mDMA0STB * const myDMA0STB;
+extern volatile mDMA0PAD * const myDMA0PAD;
+extern volatile mDMA0CNT * const myDMA0CNT;
+
+extern volatile mDMA1CON * const myDMA1CON;
+extern volatile mDMA1REQ * const myDMA1REQ;
+extern volatile mDMA1STA * const myDMA1STA;
+extern volatile mDMA1STB * const myDMA1STB;
+extern volatile mDMA1PAD * const myDMA1PAD;
+extern volatile mDMA1CNT * const myDMA1CNT;
